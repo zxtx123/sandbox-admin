@@ -1,0 +1,2617 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>智汇云管理端 - AI沙箱管理后台</title>
+  <style>
+    :root {
+      --dark: #242424;
+      --dark-soft: #303030;
+      --dark-hover: #3a3a3a;
+      --text: #2c3442;
+      --muted: #5d6570;
+      --subtle: #8b929a;
+      --line: #e4e8ec;
+      --line-soft: #eef1f4;
+      --panel: #ffffff;
+      --page: #edf4f7;
+      --primary: #0f73f6;
+      --primary-hover: #0067eb;
+      --card-shadow: 0 6px 16px rgba(33, 43, 54, 0.08);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      color: var(--text);
+      font-family: var(--font);
+      background: var(--page);
+    }
+
+    button {
+      border: 0;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 198px 180px minmax(0, 1fr);
+      grid-template-rows: 56px minmax(0, 1fr);
+      height: 100vh;
+      min-height: 100vh;
+      overflow: hidden;
+      background: var(--page);
+    }
+
+    .primary-sidebar {
+      position: relative;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      min-height: 0;
+      color: #d9d9d9;
+      background: var(--dark);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      height: 56px;
+      padding: 0 16px;
+    }
+
+    .brand-logo {
+      display: block;
+      width: 166px;
+      height: 28px;
+      flex: 0 0 auto;
+    }
+
+    .main-menu {
+      flex: 1;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 4px 6px 0;
+    }
+
+    .menu-section {
+      margin-bottom: 1px;
+    }
+
+    .main-item,
+    .console-link {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 100%;
+      min-height: 36px;
+      border-radius: 6px;
+      padding: 0 10px;
+      gap: 8px;
+      color: #d0d0d0;
+      font-size: 13px;
+      line-height: 36px;
+      white-space: nowrap;
+      transition: background 0.16s ease, color 0.16s ease;
+    }
+
+    .main-item:hover,
+    .console-link:hover {
+      color: #ffffff;
+      background: var(--dark-hover);
+    }
+
+    .menu-section.is-open > .main-item {
+      color: #ffffff;
+    }
+
+    .console-link.is-active {
+      color: #ffffff;
+      background: #3d3d3d;
+    }
+
+    .main-item .label,
+    .console-link .label {
+      overflow: hidden;
+      flex: 1;
+      text-align: left;
+      text-overflow: ellipsis;
+    }
+
+    .chevron {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      opacity: 0.85;
+      transition: transform 0.16s ease;
+    }
+
+    .menu-section.is-open > .main-item .chevron,
+    .menu-section.is-open > .main-item .main-chevron,
+    .secondary-group.is-open > .secondary-title .chevron {
+      transform: rotate(180deg);
+    }
+
+    .submenu {
+      display: none;
+      padding: 2px 0 4px;
+    }
+
+    .menu-section.is-open .submenu {
+      display: block;
+    }
+
+    .console-link {
+      min-height: 34px;
+      margin: 0 0 2px;
+      padding-left: 30px;
+      color: #cecece;
+      line-height: 34px;
+    }
+
+    .userbar {
+      display: flex;
+      align-items: center;
+      height: 54px;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding: 0 13px;
+      gap: 10px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.1));
+    }
+
+    .avatar {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 50%;
+      color: #ffffff;
+      background: #6aa7ff;
+    }
+
+    .username {
+      min-width: 0;
+      flex: 1;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .utility {
+      position: relative;
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 8px;
+      color: #dbdbdb;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .utility.exit-action {
+      width: auto;
+      padding: 0 6px;
+    }
+
+    .theme-text {
+      color: #dbdbdb;
+      font-size: 12px;
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .utility.bell {
+      background: transparent;
+    }
+
+    .badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      min-width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      color: #ffffff;
+      font-size: 9px;
+      line-height: 12px;
+      text-align: center;
+      background: #ff4d5d;
+    }
+
+    .secondary-sidebar {
+      grid-column: 2;
+      grid-row: 2;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 56px);
+      min-height: 0;
+      border-right: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .secondary-scroll {
+      flex: 1;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .main-menu,
+    .secondary-scroll {
+      scrollbar-width: thin;
+    }
+
+    .main-menu {
+      scrollbar-color: #5a5a5a transparent;
+    }
+
+    .secondary-scroll {
+      scrollbar-color: #c5cbd3 transparent;
+    }
+
+    .main-menu::-webkit-scrollbar,
+    .secondary-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .main-menu::-webkit-scrollbar-track,
+    .secondary-scroll::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .main-menu::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: #5a5a5a;
+    }
+
+    .secondary-scroll::-webkit-scrollbar-thumb {
+      border-radius: 999px;
+      background: #c5cbd3;
+    }
+
+    .secondary-block {
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .secondary-title,
+    .secondary-link {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 38px;
+      padding: 0 14px;
+      gap: 7px;
+      color: #454b54;
+      font-size: 13px;
+      white-space: nowrap;
+      transition: background 0.14s ease, color 0.14s ease;
+    }
+
+    .secondary-title:hover,
+    .secondary-link:hover {
+      color: #202020;
+      background: #f5f5f5;
+    }
+
+    .secondary-title .label {
+      overflow: hidden;
+      flex: 1;
+      text-overflow: ellipsis;
+      text-align: left;
+    }
+
+    .secondary-title .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .secondary-items {
+      display: none;
+    }
+
+    .secondary-group.is-open .secondary-items {
+      display: block;
+    }
+
+    .secondary-link {
+      padding-left: 32px;
+    }
+
+    .secondary-title.is-active,
+    .secondary-link.is-active {
+      color: #ffffff;
+      background: var(--primary);
+    }
+
+    .secondary-title.is-active:hover,
+    .secondary-link.is-active:hover {
+      color: #ffffff;
+      background: var(--primary-hover);
+    }
+
+    .secondary-link.is-muted-active {
+      color: #454b54;
+      background: #f2f2f2;
+    }
+
+    .secondary-footer {
+      display: flex;
+      align-items: center;
+      height: 36px;
+      border-top: 1px solid var(--line-soft);
+      padding-left: 13px;
+      color: #56606c;
+      background: #ffffff;
+    }
+
+    .layout-toggle {
+      display: grid;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      border-radius: 4px;
+    }
+
+    .layout-toggle:hover {
+      background: #eef3f7;
+    }
+
+    .content {
+      grid-column: 3;
+      grid-row: 2;
+      min-width: 0;
+      min-height: 0;
+      overflow: auto;
+      background: var(--page);
+    }
+
+    .topbar {
+      position: relative;
+      z-index: 3;
+      grid-column: 2 / 4;
+      grid-row: 1;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 22px;
+      color: #202020;
+      font-size: 13px;
+      font-weight: 600;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .crumbbar {
+      display: flex;
+      align-items: center;
+      height: 43px;
+      border-bottom: 1px solid var(--line);
+      padding: 0 22px;
+      color: #4c5560;
+      font-size: 13px;
+      background: #ffffff;
+    }
+
+    .crumb {
+      display: none;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .crumb.is-active {
+      display: flex;
+    }
+
+    .crumb-muted {
+      color: #9aa3ad;
+    }
+
+    .crumb-current {
+      color: #202020;
+      font-weight: 600;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.is-active {
+      display: block;
+    }
+
+    .dashboard {
+      padding: 28px 22px;
+    }
+
+    .list-view {
+      height: calc(100vh - 99px);
+      padding: 18px 22px 22px;
+      background: var(--page);
+    }
+
+    .table-panel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      border: 1px solid #dfe5eb;
+      background: #ffffff;
+      box-shadow: 0 3px 10px rgba(31, 45, 61, 0.08);
+    }
+
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 60px;
+      border-bottom: 1px solid #e5e9ef;
+      padding: 0 18px;
+      gap: 18px;
+    }
+
+    .toolbar-actions,
+    .toolbar-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .toolbar-filters {
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 32px;
+      border-radius: 3px;
+      padding: 0 12px;
+      color: #ffffff;
+      font-size: 13px;
+      background: var(--primary);
+    }
+
+    .primary-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .filter-field {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      border: 1px solid #d9dee6;
+      border-radius: 4px;
+      color: #8e96a3;
+      font-size: 12px;
+      background: #ffffff;
+    }
+
+    .filter-field.search {
+      justify-content: space-between;
+      width: 248px;
+      padding: 0 10px;
+    }
+
+    .filter-field.select {
+      width: 116px;
+      padding: 0 10px;
+      gap: 10px;
+    }
+
+    .filter-label {
+      display: inline-flex;
+      align-items: center;
+      height: 32px;
+      border: 1px solid #d9dee6;
+      border-right: 0;
+      border-radius: 4px 0 0 4px;
+      padding: 0 10px;
+      color: #202020;
+      font-size: 12px;
+      background: #fafafa;
+    }
+
+    .filter-combo {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .filter-combo .filter-field {
+      border-radius: 0 4px 4px 0;
+    }
+
+    .refresh-btn {
+      display: inline-grid;
+      width: 32px;
+      height: 32px;
+      place-items: center;
+      border: 1px solid #d9dee6;
+      border-radius: 4px;
+      color: #4c5560;
+      background: #ffffff;
+    }
+
+    .table-wrap {
+      flex: 1;
+      min-height: 0;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      color: #38424f;
+    }
+
+    .data-table th,
+    .data-table td {
+      height: 44px;
+      border-bottom: 1px solid #e8edf2;
+      padding: 0 18px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .data-table th {
+      height: 45px;
+      color: #202020;
+      font-weight: 600;
+      background: #ffffff;
+    }
+
+    .data-table tbody tr:nth-child(even) {
+      background: #f5f9fe;
+    }
+
+    .status-head {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-link {
+      margin-right: 10px;
+      color: #0f73f6;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .action-link.danger {
+      color: #ff3333;
+    }
+
+    .table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 58px;
+      border-top: 1px solid #e5e9ef;
+      padding: 0 18px;
+      color: #4c5560;
+      font-size: 13px;
+      background: #ffffff;
+    }
+
+    .page-total strong,
+    .page-total span {
+      color: #0f73f6;
+      font-weight: 600;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .page-size,
+    .page-btn,
+    .page-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 30px;
+      border: 1px solid #dfe5eb;
+      border-radius: 4px;
+      color: #4c5560;
+      background: #ffffff;
+      font-size: 12px;
+    }
+
+    .page-size {
+      min-width: 78px;
+      gap: 6px;
+      padding: 0 8px;
+    }
+
+    .page-btn,
+    .page-num {
+      width: 30px;
+    }
+
+    .page-num.is-current {
+      border-color: var(--primary);
+      color: #ffffff;
+      background: var(--primary);
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: none;
+      background: rgba(0, 0, 0, 0.62);
+    }
+
+    .overlay.is-open {
+      display: block;
+    }
+
+    .billing-modal {
+      position: fixed;
+      left: 50%;
+      top: 32px;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      width: 950px;
+      max-width: calc(100vw - 120px);
+      height: calc(100vh - 64px);
+      border-radius: 14px;
+      color: #202020;
+      background: #ffffff;
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+      transform: translateX(-50%);
+      overflow: hidden;
+    }
+
+    .billing-modal.is-open,
+    .confirm-modal.is-open {
+      display: flex;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      border-bottom: 1px solid #edf0f5;
+      padding: 0 24px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      display: grid;
+      width: 26px;
+      height: 26px;
+      place-items: center;
+      color: #6b7380;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .billing-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 34px 82px 26px;
+    }
+
+    .billing-form {
+      display: grid;
+      gap: 16px;
+      max-width: 795px;
+      margin: 0 auto;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      align-items: center;
+      column-gap: 18px;
+      min-height: 32px;
+    }
+
+    .form-label {
+      color: #333b46;
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .form-label.required::before {
+      content: "*";
+      margin-right: 6px;
+      color: #ff3333;
+    }
+
+    .input,
+    .select-input {
+      display: flex;
+      align-items: center;
+      height: 32px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      padding: 0 12px;
+      color: #b1b7c2;
+      font-size: 12px;
+      background: #ffffff;
+    }
+
+    .select-input {
+      justify-content: space-between;
+    }
+
+    .inline-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .number-input {
+      justify-content: center;
+      width: 130px;
+      color: #202020;
+    }
+
+    .select-small {
+      width: 170px;
+    }
+
+    .helper {
+      color: #9aa3ad;
+      font-size: 12px;
+    }
+
+    .radio {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: #3d4652;
+      font-size: 13px;
+    }
+
+    .radio-dot {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #d6dce5;
+      border-radius: 50%;
+    }
+
+    .radio.is-checked .radio-dot {
+      border: 4px solid #5aa2ff;
+    }
+
+    .switches {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .switch {
+      position: relative;
+      width: 32px;
+      height: 16px;
+      border-radius: 999px;
+      background: #e4e9ef;
+    }
+
+    .switch::after {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      content: "";
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .switch.is-on {
+      background: var(--primary);
+    }
+
+    .switch.is-on::after {
+      left: 18px;
+    }
+
+    .tag-table {
+      overflow: hidden;
+      width: 100%;
+      border: 1px solid #dfe5eb;
+      border-radius: 6px;
+    }
+
+    .tag-table table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-size: 13px;
+    }
+
+    .tag-table th,
+    .tag-table td {
+      height: 36px;
+      border-bottom: 1px solid #edf0f5;
+      padding: 0 24px;
+      text-align: left;
+    }
+
+    .tag-table th {
+      color: #6b7380;
+      font-weight: 500;
+      background: #fafafa;
+    }
+
+    .tag-table tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .add-row-btn {
+      display: inline-flex;
+      align-items: center;
+      height: 26px;
+      border-radius: 4px;
+      padding: 0 10px;
+      color: var(--primary);
+      background: #eaf3ff;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .modal-footer {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 58px;
+      border-top: 1px solid #edf0f5;
+      padding: 0 24px;
+      gap: 12px;
+      background: #ffffff;
+    }
+
+    .plain-btn,
+    .confirm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      height: 32px;
+      border-radius: 6px;
+      padding: 0 16px;
+      font-size: 13px;
+    }
+
+    .plain-btn {
+      border: 1px solid #d8dde6;
+      color: #3d4652;
+      background: #ffffff;
+    }
+
+    .confirm-btn {
+      color: #ffffff;
+      background: var(--primary);
+    }
+
+    .confirm-modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 32;
+      display: none;
+      flex-direction: column;
+      width: 395px;
+      border-radius: 14px;
+      background: #ffffff;
+      box-shadow: 0 16px 38px rgba(0, 0, 0, 0.24);
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+    }
+
+    /* ── APIKey 弹窗 ── */
+    .apikey-modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 31;
+      display: none;
+      flex-direction: column;
+      width: 520px;
+      max-width: calc(100vw - 60px);
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+    }
+
+    .apikey-modal.is-open {
+      display: flex;
+    }
+
+    .apikey-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      border-bottom: 1px solid #edf0f5;
+      padding: 0 24px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #202020;
+    }
+
+    .apikey-body {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .apikey-form {
+      display: grid;
+      gap: 20px;
+    }
+
+    .apikey-form-row {
+      display: grid;
+      grid-template-columns: 96px minmax(0, 1fr);
+      align-items: start;
+      column-gap: 16px;
+    }
+
+    .apikey-form-row.align-center {
+      align-items: center;
+    }
+
+    .apikey-label {
+      display: flex;
+      align-items: center;
+      height: 36px;
+      color: #333b46;
+      font-size: 13px;
+      text-align: right;
+      justify-content: flex-end;
+    }
+
+    .apikey-label.required::before {
+      content: "*";
+      margin-right: 4px;
+      color: #ff3333;
+    }
+
+    .apikey-input {
+      width: 100%;
+      height: 36px;
+      border: 1px solid #dcdfe6;
+      border-radius: 6px;
+      padding: 0 12px;
+      color: #202020;
+      font-size: 13px;
+      font-family: var(--font);
+      background: #ffffff;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .apikey-input::placeholder {
+      color: #b1b7c2;
+    }
+
+    .apikey-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(15, 115, 246, 0.12);
+    }
+
+    .apikey-textarea {
+      width: 100%;
+      height: 88px;
+      border: 1px solid #dcdfe6;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: #202020;
+      font-size: 13px;
+      font-family: var(--font);
+      background: #ffffff;
+      outline: none;
+      resize: vertical;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .apikey-textarea::placeholder {
+      color: #b1b7c2;
+    }
+
+    .apikey-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(15, 115, 246, 0.12);
+    }
+
+    .apikey-select-wrap {
+      position: relative;
+    }
+
+    .apikey-select {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 36px;
+      border: 1px solid #dcdfe6;
+      border-radius: 6px;
+      padding: 0 12px;
+      color: #b1b7c2;
+      font-size: 13px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      user-select: none;
+    }
+
+    .apikey-select.has-value {
+      color: #202020;
+    }
+
+    .apikey-select.is-open,
+    .apikey-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(15, 115, 246, 0.12);
+    }
+
+    .apikey-select .chevron {
+      width: 14px;
+      height: 14px;
+      flex: 0 0 auto;
+      color: #b1b7c2;
+      transition: transform 0.2s ease;
+    }
+
+    .apikey-select.is-open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .apikey-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 10;
+      display: none;
+      width: 100%;
+      border: 1px solid #e4e8ec;
+      border-radius: 6px;
+      padding: 4px 0;
+      background: #ffffff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .apikey-dropdown.is-open {
+      display: block;
+    }
+
+    .apikey-dropdown-item {
+      display: flex;
+      align-items: center;
+      height: 34px;
+      padding: 0 12px;
+      color: #3d4652;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.14s ease;
+    }
+
+    .apikey-dropdown-item:hover {
+      background: #f0f5ff;
+      color: var(--primary);
+    }
+
+    .apikey-dropdown-item.is-selected {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .apikey-helper {
+      margin-top: 4px;
+      color: #9aa3ad;
+      font-size: 12px;
+    }
+
+    .apikey-char-count {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 4px;
+      color: #b1b7c2;
+      font-size: 12px;
+    }
+
+    .apikey-footer {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 56px;
+      border-top: 1px solid #edf0f5;
+      padding: 0 24px;
+      gap: 12px;
+      background: #fafbfc;
+    }
+
+    .apikey-cancel-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      height: 36px;
+      border: 1px solid #d8dde6;
+      border-radius: 6px;
+      padding: 0 20px;
+      color: #3d4652;
+      font-size: 13px;
+      background: #ffffff;
+      transition: border-color 0.16s ease, color 0.16s ease;
+    }
+
+    .apikey-cancel-btn:hover {
+      border-color: #b0b6bf;
+      color: #202020;
+    }
+
+    .apikey-confirm-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 72px;
+      height: 36px;
+      border-radius: 6px;
+      padding: 0 20px;
+      color: #ffffff;
+      font-size: 13px;
+      background: var(--primary);
+      transition: background 0.16s ease;
+    }
+
+    .apikey-confirm-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .apikey-confirm-btn:disabled {
+      background: #b1d4ff;
+      cursor: not-allowed;
+    }
+
+    .confirm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 50px;
+      padding: 0 20px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .confirm-body {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      column-gap: 12px;
+      padding: 10px 34px 34px 42px;
+    }
+
+    .warn-icon {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      border-radius: 50%;
+      color: #ffffff;
+      font-weight: 700;
+      background: #ffc133;
+    }
+
+    .confirm-title {
+      margin: 0 0 12px;
+      color: #202020;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .confirm-text {
+      margin: 0;
+      color: #5e6672;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .confirm-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 50px;
+      border-top: 1px solid #edf0f5;
+      padding: 0 18px;
+      gap: 10px;
+      background: #fafbfc;
+    }
+
+    .danger-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      height: 32px;
+      border-radius: 6px;
+      padding: 0 16px;
+      color: #ffffff;
+      font-size: 13px;
+      background: #ff1f2d;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      top: 20px;
+      z-index: 40;
+      display: none;
+      align-items: center;
+      width: 342px;
+      height: 54px;
+      border-radius: 9px;
+      padding: 0 24px;
+      gap: 12px;
+      color: #202020;
+      font-size: 13px;
+      background: linear-gradient(180deg, #e9fff0 0%, #ffffff 100%);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
+      transform: translateX(-50%);
+    }
+
+    .toast.is-show {
+      display: flex;
+    }
+
+    .toast-icon {
+      display: grid;
+      width: 22px;
+      height: 22px;
+      place-items: center;
+      border-radius: 50%;
+      color: #ffffff;
+      background: #10c83f;
+      font-weight: 700;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 18px;
+    }
+
+    .stat-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-width: 0;
+      height: 116px;
+      border: 1px solid #dfe4e8;
+      border-radius: 8px;
+      padding: 21px 21px 18px;
+      background: var(--panel);
+      box-shadow: var(--card-shadow);
+    }
+
+    .stat-title {
+      color: #313842;
+      font-size: 13px;
+      line-height: 18px;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      margin-top: 12px;
+      color: #22284f;
+      font-size: 36px;
+      line-height: 38px;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .mini-chart {
+      display: flex;
+      align-items: end;
+      justify-content: center;
+      width: 66px;
+      height: 58px;
+      gap: 8px;
+      padding-bottom: 4px;
+    }
+
+    .bar {
+      width: 8px;
+      border-radius: 1px 1px 0 0;
+      background: linear-gradient(180deg, #086fff 0%, #2d8aff 42%, rgba(45, 138, 255, 0) 100%);
+      box-shadow: 0 0 5px rgba(15, 115, 246, 0.18);
+    }
+
+    .bar:nth-child(1) {
+      height: 31px;
+    }
+
+    .bar:nth-child(2) {
+      height: 56px;
+    }
+
+    .bar:nth-child(3) {
+      height: 23px;
+    }
+
+    .bar:nth-child(4) {
+      height: 42px;
+    }
+
+    .icon {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 auto;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .main-icon {
+      display: block;
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      object-fit: contain;
+    }
+
+    .main-chevron {
+      display: block;
+      width: 10px;
+      height: 10px;
+      flex: 0 0 auto;
+      opacity: 0.85;
+      object-fit: contain;
+      transition: transform 0.16s ease;
+    }
+
+    .icon.small {
+      width: 14px;
+      height: 14px;
+    }
+
+    .secondary-sidebar .secondary-title .icon.small {
+      width: 16px;
+      height: 16px;
+    }
+
+    .is-collapsed {
+      grid-template-columns: 198px 44px minmax(900px, 1fr);
+    }
+
+    .is-collapsed .secondary-sidebar {
+      overflow: hidden;
+      border-right-color: var(--line);
+    }
+
+    .is-collapsed .secondary-title {
+      justify-content: center;
+      padding: 0;
+    }
+
+    .is-collapsed .secondary-title .label,
+    .is-collapsed .secondary-title .chevron,
+    .is-collapsed .secondary-items {
+      display: none;
+    }
+
+    .is-collapsed .secondary-group.is-open .secondary-items {
+      display: none;
+    }
+
+    .is-collapsed .secondary-footer {
+      justify-content: center;
+      padding-left: 0;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="primary-sidebar">
+      <div class="brand">
+        <img class="brand-logo" src="LOGO.svg" alt="智汇云管理端" />
+      </div>
+
+      <nav class="main-menu" aria-label="主菜单">
+        <section class="menu-section" data-section>
+          <button class="main-item" type="button" aria-expanded="false">
+            <img class="main-icon" src="消息通知.svg" alt="" />
+            <span class="label">消息通知</span>
+            <img class="main-chevron" src="箭头.svg" alt="" />
+          </button>
+          <div class="submenu">
+            <button class="console-link" type="button"><span class="label">站内消息</span></button>
+            <button class="console-link" type="button"><span class="label">告警规则</span></button>
+          </div>
+        </section>
+
+        <section class="menu-section" data-section>
+          <button class="main-item" type="button" aria-expanded="false">
+            <img class="main-icon" src="产品管理.svg" alt="" />
+            <span class="label">产品管理</span>
+            <img class="main-chevron" src="箭头.svg" alt="" />
+          </button>
+          <div class="submenu">
+            <button class="console-link" type="button"><span class="label">产品列表</span></button>
+            <button class="console-link" type="button"><span class="label">资源目录</span></button>
+          </div>
+        </section>
+
+        <section class="menu-section" data-section>
+          <button class="main-item" type="button" aria-expanded="false">
+            <img class="main-icon" src="账单管理.svg" alt="" />
+            <span class="label">账单管理</span>
+            <img class="main-chevron" src="箭头.svg" alt="" />
+          </button>
+          <div class="submenu">
+            <button class="console-link" type="button"><span class="label">账单总览</span></button>
+            <button class="console-link" type="button"><span class="label">费用明细</span></button>
+          </div>
+        </section>
+
+        <section class="menu-section" data-section>
+          <button class="main-item" type="button" aria-expanded="false">
+            <img class="main-icon" src="平台配置.svg" alt="" />
+            <span class="label">平台配置</span>
+            <img class="main-chevron" src="箭头.svg" alt="" />
+          </button>
+          <div class="submenu">
+            <button class="console-link" type="button"><span class="label">系统参数</span></button>
+            <button class="console-link" type="button"><span class="label">区域配置</span></button>
+          </div>
+        </section>
+
+        <section class="menu-section is-open" data-section>
+          <button class="main-item" type="button" aria-expanded="true">
+            <img class="main-icon" src="管理后台.svg" alt="" />
+            <span class="label">管理后台</span>
+            <img class="main-chevron" src="箭头.svg" alt="" />
+          </button>
+          <div class="submenu">
+            <button class="console-link is-active" type="button" data-title="AI沙箱管理后台"><span class="label">AI沙箱管理后台</span></button>
+            <button class="console-link" type="button" data-title="云服务器 ECS控制台"><span class="label">云服务器 ECS控制台</span></button>
+            <button class="console-link" type="button" data-title="负载均衡 SLB控制台"><span class="label">负载均衡 SLB控制台</span></button>
+            <button class="console-link" type="button" data-title="域名管理 DNS控制台"><span class="label">域名管理 DNS控制台</span></button>
+            <button class="console-link" type="button" data-title="弹性公网 EIP控制台"><span class="label">弹性公网 EIP控制台</span></button>
+            <button class="console-link" type="button" data-title="专有网络 VPC控制台"><span class="label">专有网络 VPC控制台</span></button>
+            <button class="console-link" type="button" data-title="负载均衡 SLB控制台"><span class="label">负载均衡 SLB控制台</span></button>
+          </div>
+        </section>
+      </nav>
+
+      <div class="userbar">
+        <span class="avatar" aria-hidden="true">
+          <svg class="icon"><use href="#icon-user"></use></svg>
+        </span>
+        <span class="username">张三</span>
+        <button class="utility exit-action" type="button" title="退出">
+          <span class="theme-text">退出</span>
+        </button>
+        <button class="utility bell" type="button" title="通知">
+          <svg class="icon small"><use href="#icon-bell"></use></svg>
+          <span class="badge">4</span>
+        </button>
+      </div>
+    </aside>
+
+    <header class="topbar" id="consoleTitle">AI沙箱管理后台</header>
+
+    <aside class="secondary-sidebar">
+      <div class="secondary-scroll">
+        <div class="secondary-block">
+          <button class="secondary-title is-active" type="button" data-leaf="平台概览">
+            <svg class="icon small"><use href="#icon-home"></use></svg>
+            <span class="label">平台概览</span>
+          </button>
+        </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="列表">
+            <svg class="icon small"><use href="#icon-cluster"></use></svg>
+            <span class="label">沙箱实例</span>
+          </button>
+        </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="沙箱模版">
+            <svg class="icon small"><use href="#icon-cluster"></use></svg>
+            <span class="label">沙箱模版</span>
+          </button>
+        </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="用量统计">
+            <svg class="icon small"><use href="#icon-cluster"></use></svg>
+            <span class="label">用量统计</span>
+          </button>
+        </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="运行日志">
+            <svg class="icon small"><use href="#icon-window"></use></svg>
+            <span class="label">运行日志</span>
+          </button>
+        </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="API密钥">
+            <svg class="icon small"><use href="#icon-inbox"></use></svg>
+            <span class="label">API密钥</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="secondary-footer">
+        <button class="layout-toggle" id="layoutToggle" type="button" title="收起/展开二级菜单">
+          <svg class="icon small"><use href="#icon-sidebar"></use></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <div class="crumbbar">
+        <div class="crumb is-active" data-crumb="overview">平台概览</div>
+        <div class="crumb" data-crumb="list">
+          <span class="crumb-current">沙箱实例</span>
+        </div>
+        <div class="crumb" data-crumb="template">
+          <span class="crumb-current">沙箱模版</span>
+        </div>
+        <div class="crumb" data-crumb="usage">
+          <span class="crumb-current">用量统计</span>
+        </div>
+        <div class="crumb" data-crumb="log">
+          <span class="crumb-current">运行日志</span>
+        </div>
+        <div class="crumb" data-crumb="apikey">
+          <span class="crumb-current">API密钥</span>
+        </div>
+        <div class="crumb" data-crumb="plain" id="crumbTitle">平台概览</div>
+      </div>
+      <section class="dashboard view is-active" data-view="overview" aria-label="平台概览">
+        <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 16px; color: #333; font-weight: 600;">沙箱实例</h3>
+        <div class="stat-grid">
+          <article class="stat-card">
+            <div>
+              <div class="stat-title">总量</div>
+              <div class="stat-value">10000</div>
+            </div>
+            <div class="mini-chart" aria-hidden="true">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div>
+              <div class="stat-title">运行中</div>
+              <div class="stat-value">5000</div>
+            </div>
+            <div class="mini-chart" aria-hidden="true">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div>
+              <div class="stat-title">已销毁</div>
+              <div class="stat-value">5000</div>
+            </div>
+            <div class="mini-chart" aria-hidden="true">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </article>
+        </div>
+        
+        <h3 style="margin-top: 24px; margin-bottom: 16px; font-size: 16px; color: #333; font-weight: 600;">沙箱模版</h3>
+        <div class="stat-grid">
+          <article class="stat-card">
+            <div>
+              <div class="stat-title">总量</div>
+              <div class="stat-value">100</div>
+            </div>
+            <div class="mini-chart" aria-hidden="true">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div>
+              <div class="stat-title">默认模版</div>
+              <div class="stat-value">3</div>
+            </div>
+            <div class="mini-chart" aria-hidden="true">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </article>
+          <article class="stat-card">
+            <div>
+              <div class="stat-title">自定义模版</div>
+              <div class="stat-value">97</div>
+            </div>
+            <div class="mini-chart" aria-hidden="true">
+              <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </div>
+          </article>
+        </div>
+      </section>
+      <section class="list-view view" data-view="list" aria-label="沙箱实例">
+        <div class="table-panel">
+          <div class="table-toolbar">
+            <div class="toolbar-actions">
+              <button class="primary-btn" id="createClusterBtn" type="button">＋ 创建沙箱</button>
+            </div>
+            <div class="toolbar-filters">
+              <div class="filter-combo">
+                <span class="filter-label">资源组</span>
+                <button class="filter-field select" type="button">
+                  <span>选择资源组</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <div class="filter-combo">
+                <span class="filter-label">创建人</span>
+                <button class="filter-field select" type="button">
+                  <span>选择创建人</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <div class="filter-field search" style="padding: 0;">
+                <input type="text" placeholder="沙箱ID/模版名称" style="border: none; outline: none; background: transparent; width: 100%; height: 100%; padding-left: 10px; font-size: inherit; color: #202020;" />
+                <svg class="icon small" style="margin-right: 10px; flex-shrink: 0; color: #8e96a3;"><use href="#icon-search"></use></svg>
+              </div>
+              <button class="refresh-btn" type="button" title="刷新">
+                <svg class="icon small"><use href="#icon-refresh"></use></svg>
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <colgroup>
+                <col style="width: 15%" />
+                <col style="width: 15%" />
+                <col style="width: 12%" />
+                <col style="width: 10%" />
+                <col style="width: 10%" />
+                <col style="width: 12%" />
+                <col style="width: 14%" />
+                <col style="width: 12%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>沙箱ID</th>
+                  <th>模版名称</th>
+                  <th>资源组</th>
+                  <th>CPU</th>
+                  <th>内存</th>
+                  <th>MetaData</th>
+                  <th>启动时间</th>
+                  <th>创建人</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>sbx-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td>张三</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td>李四</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td>王五</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td>赵六</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td>钱七</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td>孙八</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td>周九</td>
+                </tr>
+                <tr>
+                  <td>sbx-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td>吴十</td>
+                </tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <div class="page-total">共 <strong>3</strong> 条记录　 第 <span>1</span> / 1 页</div>
+            <div class="pagination">
+              <button class="page-size" type="button">10 条/页 <svg class="chevron"><use href="#icon-chevron"></use></svg></button>
+              <button class="page-btn" type="button">‹</button>
+              <button class="page-num is-current" type="button">1</button>
+              <button class="page-num" type="button">2</button>
+              <button class="page-num" type="button">3</button>
+              <button class="page-num" type="button">4</button>
+              <button class="page-num" type="button">…</button>
+              <button class="page-num" type="button">50</button>
+              <button class="page-btn" type="button">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="list-view view" data-view="template" aria-label="沙箱模版">
+        <div class="table-panel">
+          <div class="table-toolbar">
+            <div class="toolbar-actions">
+              <button class="primary-btn" id="createTemplateBtn" type="button">＋ 创建模版</button>
+            </div>
+            <div class="toolbar-filters">
+              <div class="filter-combo">
+                <span class="filter-label">资源组</span>
+                <button class="filter-field select" type="button">
+                  <span>选择资源组</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <div class="filter-combo">
+                <span class="filter-label">创建人</span>
+                <button class="filter-field select" type="button">
+                  <span>选择创建人</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <div class="filter-field search" style="padding: 0;">
+                <input type="text" placeholder="模版ID/模版名称" style="border: none; outline: none; background: transparent; width: 100%; height: 100%; padding-left: 10px; font-size: inherit; color: #202020;" />
+                <svg class="icon small" style="margin-right: 10px; flex-shrink: 0; color: #8e96a3;"><use href="#icon-search"></use></svg>
+              </div>
+              <button class="refresh-btn" type="button" title="刷新">
+                <svg class="icon small"><use href="#icon-refresh"></use></svg>
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <colgroup>
+                <col style="width: 14%" />
+                <col style="width: 14%" />
+                <col style="width: 10%" />
+                <col style="width: 8%" />
+                <col style="width: 8%" />
+                <col style="width: 14%" />
+                <col style="width: 14%" />
+                <col style="width: 10%" />
+                <col style="width: 8%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>模版ID</th>
+                  <th>模版名称</th>
+                  <th>资源组</th>
+                  <th>CPU</th>
+                  <th>内存</th>
+                  <th>创建时间</th>
+                  <th>修改时间</th>
+                  <th>创建人</th>
+                  <th>可见性</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>tpl-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-01 10:00:00</td><td>2023-08-05 14:30:00</td><td>张三</td><td>public</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-01 11:30:00</td><td>2023-08-06 09:15:00</td><td>李四</td><td>private</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-02 09:15:00</td><td>2023-08-07 16:20:00</td><td>王五</td><td>public</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>2023-08-02 14:20:00</td><td>2023-08-08 10:45:00</td><td>赵六</td><td>private</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>2023-08-03 16:45:00</td><td>2023-08-09 11:00:00</td><td>钱七</td><td>public</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-04 10:10:00</td><td>2023-08-10 15:30:00</td><td>孙八</td><td>private</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-04 11:05:00</td><td>2023-08-11 08:50:00</td><td>周九</td><td>public</td>
+                </tr>
+                <tr>
+                  <td>tpl-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-05 09:30:00</td><td>2023-08-12 13:10:00</td><td>吴十</td><td>private</td>
+                </tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <div class="page-total">共 <strong>8</strong> 条记录　 第 <span>1</span> / 1 页</div>
+            <div class="pagination">
+              <button class="page-size" type="button">10 条/页 <svg class="chevron"><use href="#icon-chevron"></use></svg></button>
+              <button class="page-btn" type="button">‹</button>
+              <button class="page-num is-current" type="button">1</button>
+              <button class="page-btn" type="button">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="usage-view view" data-view="usage" aria-label="用量统计" style="padding: 20px; background: #f5f7fa; min-height: calc(100vh - 99px);">
+        <div style="background: #fff; padding: 16px 24px; border-radius: 4px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #606266; font-size: 14px;">资源组</span>
+            <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff; cursor: pointer;">
+              <span>全部资源组</span>
+              <svg class="chevron" style="width: 14px; height: 14px; color: #c0c4cc;"><use href="#icon-chevron"></use></svg>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #606266; font-size: 14px;">周期</span>
+            <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff;">
+              2025-06-12 14:02:41 - 2026-07-18 14:02:41
+              <svg class="icon small" style="color: #c0c4cc;"><use href="#icon-window"></use></svg>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #606266; font-size: 14px;">粒度</span>
+            <div style="display: flex; border: 1px solid #dcdfe6; border-radius: 4px; overflow: hidden;">
+              <button style="padding: 4px 12px; font-size: 13px; background: #e6f1fc; color: #409eff; border: none; border-right: 1px solid #dcdfe6; cursor: pointer;">时</button>
+              <button style="padding: 4px 12px; font-size: 13px; background: #fff; color: #606266; border: none; cursor: pointer;">天</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div style="background: #fff; padding: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 16px; font-weight: 500; color: #303133; margin-bottom: 4px;">vCPU 使用时长</div>
+              <div style="font-size: 12px; color: #909399;">所有沙箱消耗的虚拟 CPU 时间</div>
+            </div>
+            <div style="height: 200px; position: relative;">
+              <div style="position: absolute; left: 0; top: 0; bottom: 20px; width: 30px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; color: #909399; text-align: right; padding-right: 8px;">
+                <span>40</span><span>30</span><span>20</span><span>10</span><span>0</span>
+              </div>
+              <div style="position: absolute; left: 30px; right: 0; top: 0; bottom: 20px; border-left: 1px solid #ebeef5; border-bottom: 1px solid #ebeef5;">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                  <path d="M0,95 L10,95 L15,80 L20,95 L30,95 L35,60 L40,95 L50,95 L55,85 L60,95 L65,10 L70,60 L75,20 L80,70 L85,40 L90,95 L100,95" fill="none" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                  <circle cx="35" cy="60" r="2" fill="#20c997"/>
+                  <circle cx="65" cy="10" r="2" fill="#20c997"/>
+                  <circle cx="75" cy="20" r="2" fill="#20c997"/>
+                </svg>
+              </div>
+              <div style="position: absolute; left: 30px; right: 0; bottom: 0; height: 20px; display: flex; justify-content: space-between; font-size: 12px; color: #909399; padding-top: 4px;">
+                <span>2025-09-11 16:00</span><span>2025-11-19 18:00</span><span>2025-12-03 11:00</span><span>2025-12-23 11:00</span><span>2026-01-29 15:00</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="background: #fff; padding: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+            <div style="margin-bottom: 16px;">
+              <div style="font-size: 16px; font-weight: 500; color: #303133; margin-bottom: 4px;">内存使用时长</div>
+              <div style="font-size: 12px; color: #909399;">所有沙箱内存使用总时长</div>
+            </div>
+            <div style="height: 200px; position: relative;">
+              <div style="position: absolute; left: 0; top: 0; bottom: 20px; width: 30px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; color: #909399; text-align: right; padding-right: 8px;">
+                <span>40</span><span>30</span><span>20</span><span>10</span><span>0</span>
+              </div>
+              <div style="position: absolute; left: 30px; right: 0; top: 0; bottom: 20px; border-left: 1px solid #ebeef5; border-bottom: 1px solid #ebeef5;">
+                <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                  <path d="M0,95 L10,95 L15,85 L20,95 L30,95 L35,65 L40,95 L50,95 L55,80 L60,95 L65,15 L70,55 L75,25 L80,65 L85,45 L90,95 L100,95" fill="none" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                  <circle cx="35" cy="65" r="2" fill="#20c997"/>
+                  <circle cx="65" cy="15" r="2" fill="#20c997"/>
+                  <circle cx="75" cy="25" r="2" fill="#20c997"/>
+                </svg>
+              </div>
+              <div style="position: absolute; left: 30px; right: 0; bottom: 0; height: 20px; display: flex; justify-content: space-between; font-size: 12px; color: #909399; padding-top: 4px;">
+                <span>2025-09-11 16:00</span><span>2025-11-19 18:00</span><span>2025-12-03 11:00</span><span>2025-12-23 11:00</span><span>2026-01-29 15:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="background: #fff; padding: 20px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #606266;">
+              <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #20c997;"></span>
+              沙箱数量统计
+            </div>
+          </div>
+          <div style="height: 300px; position: relative;">
+            <div style="position: absolute; left: 0; top: 0; bottom: 20px; width: 30px; display: flex; flex-direction: column; justify-content: space-between; font-size: 12px; color: #909399; text-align: right; padding-right: 8px;">
+              <span>80</span><span>70</span><span>60</span><span>50</span><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span>
+            </div>
+            <div style="position: absolute; left: 30px; right: 0; top: 0; bottom: 20px; border-left: 1px solid #ebeef5; border-bottom: 1px solid #ebeef5;">
+              <!-- Grid lines -->
+              <div style="position: absolute; left: 0; right: 0; top: 12.5%; border-top: 1px dashed #ebeef5;"></div>
+              <div style="position: absolute; left: 0; right: 0; top: 25%; border-top: 1px dashed #ebeef5;"></div>
+              <div style="position: absolute; left: 0; right: 0; top: 37.5%; border-top: 1px dashed #ebeef5;"></div>
+              <div style="position: absolute; left: 0; right: 0; top: 50%; border-top: 1px dashed #ebeef5;"></div>
+              <div style="position: absolute; left: 0; right: 0; top: 62.5%; border-top: 1px dashed #ebeef5;"></div>
+              <div style="position: absolute; left: 0; right: 0; top: 75%; border-top: 1px dashed #ebeef5;"></div>
+              <div style="position: absolute; left: 0; right: 0; top: 87.5%; border-top: 1px dashed #ebeef5;"></div>
+              
+              <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <defs>
+                  <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#20c997" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#20c997" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,95 Q2,80 5,75 T10,90 T15,75 T20,90 T25,70 T30,60 T35,85 T40,50 T45,85 T50,75 T55,20 T60,80 T65,65 T70,90 T75,70 T80,90 T85,80 T90,25 T95,90 T100,95 L100,100 L0,100 Z" fill="url(#areaGradient)"/>
+                <path d="M0,95 Q2,80 5,75 T10,90 T15,75 T20,90 T25,70 T30,60 T35,85 T40,50 T45,85 T50,75 T55,20 T60,80 T65,65 T70,90 T75,70 T80,90 T85,80 T90,25 T95,90 T100,95" fill="none" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="5" cy="75" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="15" cy="75" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="25" cy="70" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="30" cy="60" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="40" cy="50" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="50" cy="75" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="55" cy="20" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="65" cy="65" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="75" cy="70" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="85" cy="80" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+                <circle cx="90" cy="25" r="2" fill="#fff" stroke="#20c997" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+              </svg>
+            </div>
+            <div style="position: absolute; left: 30px; right: 0; bottom: 0; height: 20px; display: flex; justify-content: space-between; font-size: 12px; color: #909399; padding-top: 4px;">
+              <span>2025-09-11</span><span>2025-09-22</span><span>2025-10-30</span><span>2025-11-19</span><span>2025-11-26</span><span>2025-12-03</span><span>2025-12-10</span><span>2025-12-22</span><span>2025-12-29</span><span>2026-01-15</span><span>2026-01-27</span><span>2026-02-09</span><span>2026-03-09</span><span>2026-03-30</span><span>2026-05-30</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="log-view view" data-view="log" aria-label="运行日志" style="padding: 16px 22px; background: #fff; min-height: calc(100vh - 99px);">
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #606266; font-size: 13px;">资源组</span>
+            <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff; cursor: pointer;">
+              <span>全部资源组</span>
+              <svg class="chevron" style="width: 14px; height: 14px; color: #c0c4cc;"><use href="#icon-chevron"></use></svg>
+            </div>
+          </div>
+          <button style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-size: 13px; color: #606266; background: #fff; border: 1px solid #dcdfe6; border-radius: 4px; cursor: pointer;">
+            <svg class="icon small" style="color: #909399;"><use href="#icon-window"></use></svg> 近30分钟
+          </button>
+          <div style="display: inline-flex; align-items: center; border: 1px solid #dcdfe6; border-radius: 4px; overflow: hidden;">
+            <button style="display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 28px; background: #fff; border: none; border-right: 1px solid #dcdfe6; cursor: pointer;">
+              <svg class="icon small" style="color: #909399;"><use href="#icon-refresh"></use></svg>
+            </button>
+            <button style="display: inline-flex; align-items: center; gap: 4px; padding: 0 10px; height: 28px; font-size: 13px; color: #606266; background: #fff; border: none; cursor: pointer;">
+              Off <svg class="chevron" style="width: 14px; height: 14px; color: #c0c4cc;"><use href="#icon-chevron"></use></svg>
+            </button>
+          </div>
+          <button style="display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; font-size: 13px; color: #606266; background: #fff; border: 1px solid #dcdfe6; border-radius: 4px; cursor: pointer;">
+            下载 <svg class="chevron" style="width: 14px; height: 14px; color: #c0c4cc;"><use href="#icon-chevron"></use></svg>
+          </button>
+        </div>
+        
+        <div class="table-panel" style="box-shadow: none; border: 1px solid #ebeef5;">
+          <div class="table-wrap">
+            <table class="data-table" style="border-collapse: collapse;">
+              <colgroup>
+                <col style="width: 20%" />
+                <col style="width: 20%" />
+                <col style="width: 20%" />
+                <col style="width: 20%" />
+                <col style="width: 20%" />
+              </colgroup>
+              <thead style="background: #fafafa;">
+                <tr>
+                  <th style="padding: 8px 12px; text-align: center; border-bottom: none;">sandboxid</th>
+                  <th style="padding: 8px 12px; text-align: center; border-bottom: none;">action</th>
+                  <th style="padding: 8px 12px; text-align: center; border-bottom: none;">requestid</th>
+                  <th style="padding: 8px 12px; text-align: center; border-bottom: none;">content</th>
+                  <th style="padding: 8px 12px; text-align: center; border-bottom: none;">extime <svg class="icon" style="width: 10px; height: 10px; margin-left: 4px; color: #c0c4cc;"><use href="#icon-grid"></use></svg></th>
+                </tr>
+                <tr>
+                  <th style="padding: 4px 12px 12px; border-bottom: 1px solid #ebeef5;">
+                    <div style="display: flex; align-items: center; border: 1px solid #dcdfe6; border-radius: 2px; padding: 2px 6px; background: #fff;">
+                      <span style="font-size: 12px; color: #c0c4cc; margin-right: 4px;">abc</span>
+                      <input type="text" placeholder="输入关键字" style="flex: 1; border: none; outline: none; width: 50px; font-size: 12px;" />
+                      <span style="font-size: 12px; color: #c0c4cc; cursor: pointer;">×</span>
+                    </div>
+                  </th>
+                  <th style="padding: 4px 12px 12px; border-bottom: 1px solid #ebeef5;">
+                    <div style="display: flex; align-items: center; border: 1px solid #dcdfe6; border-radius: 2px; padding: 2px 6px; background: #fff;">
+                      <span style="font-size: 12px; color: #c0c4cc; margin-right: 4px;">abc</span>
+                      <input type="text" placeholder="输入关键字" style="flex: 1; border: none; outline: none; width: 50px; font-size: 12px;" />
+                      <span style="font-size: 12px; color: #c0c4cc; cursor: pointer;">×</span>
+                    </div>
+                  </th>
+                  <th style="padding: 4px 12px 12px; border-bottom: 1px solid #ebeef5;">
+                    <div style="display: flex; align-items: center; border: 1px solid #dcdfe6; border-radius: 2px; padding: 2px 6px; background: #fff;">
+                      <span style="font-size: 12px; color: #c0c4cc; margin-right: 4px;">abc</span>
+                      <input type="text" placeholder="输入关键字" style="flex: 1; border: none; outline: none; width: 50px; font-size: 12px;" />
+                      <span style="font-size: 12px; color: #c0c4cc; cursor: pointer;">×</span>
+                    </div>
+                  </th>
+                  <th style="padding: 4px 12px 12px; border-bottom: 1px solid #ebeef5;">
+                    <div style="display: flex; align-items: center; border: 1px solid #dcdfe6; border-radius: 2px; padding: 2px 6px; background: #fff;">
+                      <span style="font-size: 12px; color: #c0c4cc; margin-right: 4px;">abc</span>
+                      <input type="text" placeholder="输入关键字" style="flex: 1; border: none; outline: none; width: 50px; font-size: 12px;" />
+                      <span style="font-size: 12px; color: #c0c4cc; cursor: pointer;">×</span>
+                    </div>
+                  </th>
+                  <th style="padding: 4px 12px 12px; border-bottom: 1px solid #ebeef5;">
+                    <div style="display: flex; align-items: center; border: 1px solid #dcdfe6; border-radius: 2px; padding: 2px 6px; background: #fff;">
+                      <span style="font-size: 12px; color: #c0c4cc; margin-right: 4px;">abc</span>
+                      <input type="text" placeholder="输入关键字" style="flex: 1; border: none; outline: none; width: 50px; font-size: 12px;" />
+                      <span style="font-size: 12px; color: #c0c4cc; cursor: pointer;">×</span>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="5" style="text-align: center; padding: 120px 0; color: #909399;">
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                      <svg class="icon" style="width: 48px; height: 48px; color: #dcdfe6;"><use href="#icon-inbox"></use></svg>
+                      <span style="font-size: 13px;">暂无数据</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer" style="background: #fff; border-top: none;">
+            <div class="page-total">共 <strong>0</strong> 条记录</div>
+            <div class="pagination">
+              <button class="page-size" type="button" style="border: 1px solid #dcdfe6;">20 条/页 <svg class="chevron"><use href="#icon-chevron"></use></svg></button>
+              <button class="page-num is-current" type="button" style="background: #1890ff; border-color: #1890ff; color: #fff;">1</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="list-view view" data-view="apikey" aria-label="API密钥">
+        <div class="table-panel">
+          <div class="table-toolbar">
+            <div class="toolbar-actions">
+              <button class="primary-btn" id="createApiKeyBtn" type="button">＋ 创建APIKey</button>
+            </div>
+            <div class="toolbar-filters">
+              <div class="filter-combo">
+                <span class="filter-label">资源组</span>
+                <button class="filter-field select" type="button">
+                  <span>选择资源组</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <button class="refresh-btn" type="button" title="刷新">
+                <svg class="icon small"><use href="#icon-refresh"></use></svg>
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table">
+              <colgroup>
+                <col style="width: 10%" />
+                <col style="width: 25%" />
+                <col style="width: 15%" />
+                <col style="width: 20%" />
+                <col style="width: 20%" />
+                <col style="width: 10%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>APIKey</th>
+                  <th>资源组</th>
+                  <th>描述</th>
+                  <th>创建时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>48</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>研发部</td>
+                  <td>ddd</td>
+                  <td>2026-02-28 14:41:20</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>44</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>数据组</td>
+                  <td>cli auth login生成的 key. Create By yupu</td>
+                  <td>2026-01-15 17:01:14</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>38</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>前端组</td>
+                  <td>cli auth login生成的 key. Create By yupu</td>
+                  <td>2025-12-02 14:29:53</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>35</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>测试组</td>
+                  <td>cli auth login生成的 key. Create By yupu</td>
+                  <td>2025-11-26 19:46:40</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>22</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>算法组</td>
+                  <td>cli auth login生成的 key. Create By yupu</td>
+                  <td>2025-10-28 17:33:57</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>研发部</td>
+                  <td>cli auth login生成的 key. Create By yupu</td>
+                  <td>2025-09-15 15:28:46</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>数据组</td>
+                  <td>cli auth login生成的 key. Create By yupu</td>
+                  <td>2025-09-12 17:23:43</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      ******************************** <svg class="icon small" style="color: var(--primary); cursor: pointer;"><use href="#icon-window"></use></svg>
+                    </div>
+                  </td>
+                  <td>前端组</td>
+                  <td>wjx</td>
+                  <td>2025-09-11 16:15:11</td>
+                  <td><a class="action-link danger js-delete">删除</a></td>
+                </tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <div class="page-total">共 <strong>8</strong> 条记录　 第 <span>1</span> / 1 页</div>
+            <div class="pagination">
+              <button class="page-size" type="button">10 条/页 <svg class="chevron"><use href="#icon-chevron"></use></svg></button>
+              <button class="page-btn" type="button">‹</button>
+              <button class="page-num is-current" type="button">1</button>
+              <button class="page-btn" type="button">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="overlay" id="modalOverlay"></div>
+
+  <section class="apikey-modal" id="apiKeyModal" role="dialog" aria-modal="true" aria-labelledby="apiKeyTitle">
+    <header class="apikey-header">
+      <div id="apiKeyTitle">创建APIKey</div>
+      <button class="modal-close js-close-apikey" type="button" aria-label="关闭">×</button>
+    </header>
+    <div class="apikey-body">
+      <div class="apikey-form">
+        <div class="apikey-form-row align-center">
+          <label class="apikey-label required">资源组</label>
+          <div class="apikey-select-wrap" id="apiKeyGroupWrap">
+            <div class="apikey-select" id="apiKeyGroupSelect" tabindex="0" role="listbox" aria-label="选择资源组">
+              <span class="apikey-select-text">请选择资源组</span>
+              <svg class="chevron"><use href="#icon-chevron"></use></svg>
+            </div>
+            <div class="apikey-dropdown" id="apiKeyGroupDropdown">
+              <div class="apikey-dropdown-item" data-value="研发部">研发部</div>
+              <div class="apikey-dropdown-item" data-value="测试部">测试部</div>
+              <div class="apikey-dropdown-item" data-value="运维部">运维部</div>
+              <div class="apikey-dropdown-item" data-value="产品部">产品部</div>
+              <div class="apikey-dropdown-item" data-value="默认资源组">默认资源组</div>
+            </div>
+          </div>
+        </div>
+        <div class="apikey-form-row">
+          <label class="apikey-label">描述</label>
+          <div>
+            <textarea class="apikey-textarea" id="apiKeyDesc" placeholder="请输入描述信息，最多200字" maxlength="200"></textarea>
+            <div class="apikey-char-count"><span id="apiKeyDescCount">0</span>/200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="apikey-footer">
+      <button class="apikey-cancel-btn js-close-apikey" type="button">取消</button>
+      <button class="apikey-confirm-btn js-confirm-apikey" id="apiKeyConfirmBtn" type="button" disabled>确定</button>
+    </footer>
+  </section>
+
+  <section class="billing-modal" id="billingModal" role="dialog" aria-modal="true" aria-labelledby="billingTitle">
+    <header class="modal-header">
+      <div id="billingTitle">新建计费项</div>
+      <button class="modal-close js-close-billing" type="button" aria-label="关闭">×</button>
+    </header>
+    <div class="billing-body">
+      <div class="billing-form">
+        <div class="form-row">
+          <label class="form-label required">所属产品/服务</label>
+          <div class="select-input">请选择所属产品/服务 <svg class="chevron"><use href="#icon-chevron"></use></svg></div>
+        </div>
+        <div class="form-row">
+          <label class="form-label required">计费项名称</label>
+          <div class="input">支持中英文，数字，下划线，中划线，/，.，[,] (50个字符以内)</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label required">计费项标识符</label>
+          <div class="input">支持中英文，数字，下划线，中划线(50个字符以内)</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label required">计费项类型</label>
+          <div class="inline-controls">
+            <span class="radio is-checked"><span class="radio-dot"></span>默认</span>
+            <span class="radio"><span class="radio-dot"></span>时长(与时长有关)</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label required">计费单位</label>
+          <div>
+            <div class="inline-controls">
+              <div class="input number-input">1</div>
+              <div class="select-input select-small">请选择单位 <svg class="chevron"><use href="#icon-chevron"></use></svg></div>
+            </div>
+            <div class="helper" style="margin-top:8px;">如，设置500 KiBy/s收费0.25元。那么在此处输入500，则500 KiBy/s是一个计费单位。</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label required">计费规则</label>
+          <div class="select-input select-small">请选择计费规则 <svg class="chevron"><use href="#icon-chevron"></use></svg></div>
+        </div>
+        <div class="form-row">
+          <label class="form-label required">用量上报频率</label>
+          <div class="inline-controls">
+            <div class="select-input select-small">5分钟 <svg class="chevron"><use href="#icon-chevron"></use></svg></div>
+            <span class="helper">上报频率，即，聚合频率</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">供应商</label>
+          <div class="switches">
+            <span class="switch"></span>
+            <span class="switch is-on"></span>
+            <span class="helper">开启后设置经营分析的供应商，不开启则是默认</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">备注</label>
+          <div class="input">备注</div>
+        </div>
+        <div class="form-row">
+          <label class="form-label">计费标签</label>
+          <div class="input">请选择计费标签</div>
+        </div>
+        <div class="form-row" style="align-items:start;">
+          <label class="form-label"></label>
+          <div class="tag-table">
+            <table>
+              <thead><tr><th>选中的标签</th><th>标识</th><th>操作</th></tr></thead>
+              <tbody>
+                <tr><td>北京1区</td><td>beijing1</td><td><a class="action-link">删除</a></td></tr>
+                <tr><td>北京2区</td><td>beijing2</td><td><a class="action-link">删除</a></td></tr>
+                <tr><td>北京3区</td><td>beijing3</td><td><a class="action-link">删除</a></td></tr>
+                <tr><td colspan="3" style="text-align:center;"><button class="add-row-btn" type="button">＋ 添加行</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="modal-footer">
+      <button class="plain-btn js-close-billing" type="button">取消</button>
+      <button class="confirm-btn js-close-billing" type="button">确定</button>
+    </footer>
+  </section>
+
+  <section class="confirm-modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+    <header class="confirm-header">
+      <div id="deleteTitle">提示</div>
+      <button class="modal-close js-close-delete" type="button" aria-label="关闭">×</button>
+    </header>
+    <div class="confirm-body">
+      <span class="warn-icon">!</span>
+      <div>
+        <p class="confirm-title">确认删除!</p>
+        <p class="confirm-text">确认删除XXXXX名称的数据，<br>确定删除后，所选内容将无法恢复，请谨慎操作。</p>
+      </div>
+    </div>
+    <footer class="confirm-footer">
+      <button class="plain-btn js-close-delete" type="button">取消</button>
+      <button class="danger-btn" id="confirmDeleteBtn" type="button">确定</button>
+    </footer>
+  </section>
+
+  <div class="toast" id="successToast" role="status">
+    <span class="toast-icon">✓</span>
+    <span>删除成功!</span>
+  </div>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m7 10 5 5 5-5"/></symbol>
+    <symbol id="icon-message" viewBox="0 0 24 24"><path d="M5 6h14v11H8l-3 3z"/><path d="M8 9h8M8 13h5"/></symbol>
+    <symbol id="icon-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></symbol>
+    <symbol id="icon-wallet" viewBox="0 0 24 24"><path d="M5 7h14v12H5z"/><path d="M8 7V5h8v2"/><path d="M16 13h3"/></symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1.2l2-1.5-2-3.4-2.4 1a7 7 0 0 0-2-1.2L14.2 3h-4.4l-.4 2.7a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.5A7 7 0 0 0 5 12c0 .4 0 .8.1 1.2l-2 1.5 2 3.4 2.4-1a7 7 0 0 0 2 1.2l.4 2.7h4.4l.4-2.7a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2z"/></symbol>
+    <symbol id="icon-monitor" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1"/><path d="M9 20h6M12 16v4M8 9h8"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></symbol>
+    <symbol id="icon-shirt" viewBox="0 0 24 24"><path d="m8 4 4 3 4-3 4 3-2 4-2-1v10H8V10l-2 1-2-4z"/></symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="m4 11 8-7 8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-5h4v5"/></symbol>
+    <symbol id="icon-cluster" viewBox="0 0 24 24"><rect x="4" y="5" width="7" height="7" rx="1"/><rect x="13" y="5" width="7" height="7" rx="1"/><rect x="8.5" y="14" width="7" height="7" rx="1"/></symbol>
+    <symbol id="icon-window" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1"/><path d="M4 9h16M8 13h8M8 16h5"/></symbol>
+    <symbol id="icon-inbox" viewBox="0 0 24 24"><path d="M4 6h16l-2 12H6z"/><path d="M4 13h5l2 3h2l2-3h5"/></symbol>
+    <symbol id="icon-sidebar" viewBox="0 0 24 24"><path d="M4 5h16M4 19h16M4 12h10"/><path d="m8 9-4 3 4 3"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 5v6h-6"/></symbol>
+    <symbol id="icon-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v5l-4 2v-7z"/></symbol>
+  </svg>
+
+  <script>
+    const app = document.querySelector("#app");
+    const consoleTitle = document.querySelector("#consoleTitle");
+    const crumbTitle = document.querySelector("#crumbTitle");
+    const overlay = document.querySelector("#modalOverlay");
+    const billingModal = document.querySelector("#billingModal");
+    const apiKeyModal = document.querySelector("#apiKeyModal");
+    const deleteModal = document.querySelector("#deleteModal");
+    const successToast = document.querySelector("#successToast");
+    let toastTimer;
+
+    function showContent(page) {
+      const target = page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : "plain";
+      document.querySelectorAll(".view").forEach((view) => {
+        view.classList.toggle("is-active", view.dataset.view === target);
+      });
+      document.querySelectorAll(".crumb").forEach((crumb) => {
+        crumb.classList.toggle("is-active", crumb.dataset.crumb === target);
+      });
+      if (target === "plain") {
+        crumbTitle.textContent = page;
+      }
+    }
+
+    document.querySelectorAll("[data-section] > .main-item").forEach((button) => {
+      button.addEventListener("click", () => {
+        const section = button.closest("[data-section]");
+        const expanded = !section.classList.contains("is-open");
+        section.classList.toggle("is-open", expanded);
+        button.setAttribute("aria-expanded", String(expanded));
+      });
+    });
+
+    document.querySelectorAll(".console-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        document.querySelectorAll(".console-link").forEach((item) => item.classList.remove("is-active"));
+        link.classList.add("is-active");
+        const title = link.dataset.title || link.textContent.trim();
+        consoleTitle.textContent = title;
+      });
+    });
+
+    document.querySelectorAll("[data-secondary-group] > .secondary-title").forEach((button) => {
+      button.addEventListener("click", () => {
+        const group = button.closest("[data-secondary-group]");
+        const expanded = !group.classList.contains("is-open");
+        group.classList.toggle("is-open", expanded);
+        button.setAttribute("aria-expanded", String(expanded));
+      });
+    });
+
+    document.querySelectorAll(".secondary-link").forEach((link) => {
+      link.addEventListener("click", () => {
+        document.querySelectorAll(".secondary-title.is-active").forEach((item) => {
+          item.classList.remove("is-active");
+        });
+        document.querySelectorAll(".secondary-link").forEach((item) => {
+          item.classList.remove("is-active", "is-muted-active");
+        });
+        link.classList.add("is-active");
+        showContent(link.dataset.page || link.textContent.trim());
+      });
+    });
+
+    document.querySelectorAll("[data-leaf]").forEach((leaf) => {
+      leaf.addEventListener("click", () => {
+        document.querySelectorAll(".secondary-title.is-active").forEach((item) => {
+          item.classList.remove("is-active");
+        });
+        document.querySelectorAll(".secondary-link").forEach((item) => {
+          item.classList.remove("is-active", "is-muted-active");
+        });
+        leaf.classList.add("is-active");
+        showContent(leaf.dataset.leaf);
+      });
+    });
+
+    document.querySelector("#layoutToggle").addEventListener("click", () => {
+      app.classList.toggle("is-collapsed");
+    });
+
+    function openLayer(modal) {
+      overlay.classList.add("is-open");
+      modal.classList.add("is-open");
+    }
+
+    function closeLayer(modal) {
+      modal.classList.remove("is-open");
+      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open")) {
+        overlay.classList.remove("is-open");
+      }
+    }
+
+    function showToast() {
+      window.clearTimeout(toastTimer);
+      successToast.classList.add("is-show");
+      toastTimer = window.setTimeout(() => {
+        successToast.classList.remove("is-show");
+      }, 3000);
+    }
+
+    document.querySelector("#createClusterBtn").addEventListener("click", () => {
+      openLayer(billingModal);
+    });
+
+    /* ── APIKey 弹窗交互 ── */
+    const apiKeyGroupSelect = document.querySelector("#apiKeyGroupSelect");
+    const apiKeyGroupDropdown = document.querySelector("#apiKeyGroupDropdown");
+    const apiKeyGroupText = apiKeyGroupSelect.querySelector(".apikey-select-text");
+    const apiKeyDescTextarea = document.querySelector("#apiKeyDesc");
+    const apiKeyDescCount = document.querySelector("#apiKeyDescCount");
+    const apiKeyConfirmBtn = document.querySelector("#apiKeyConfirmBtn");
+    let selectedGroup = "";
+
+    function validateApiKeyForm() {
+      const groupValid = selectedGroup.length > 0;
+      apiKeyConfirmBtn.disabled = !groupValid;
+    }
+
+    apiKeyDescTextarea.addEventListener("input", () => {
+      apiKeyDescCount.textContent = apiKeyDescTextarea.value.length;
+    });
+
+    apiKeyGroupSelect.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isOpen = apiKeyGroupDropdown.classList.contains("is-open");
+      apiKeyGroupDropdown.classList.toggle("is-open", !isOpen);
+      apiKeyGroupSelect.classList.toggle("is-open", !isOpen);
+    });
+
+    apiKeyGroupSelect.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        apiKeyGroupSelect.click();
+      }
+    });
+
+    apiKeyGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        selectedGroup = item.dataset.value;
+        apiKeyGroupText.textContent = selectedGroup;
+        apiKeyGroupSelect.classList.add("has-value");
+        apiKeyGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+        item.classList.add("is-selected");
+        apiKeyGroupDropdown.classList.remove("is-open");
+        apiKeyGroupSelect.classList.remove("is-open");
+        validateApiKeyForm();
+      });
+    });
+
+    document.addEventListener("click", () => {
+      apiKeyGroupDropdown.classList.remove("is-open");
+      apiKeyGroupSelect.classList.remove("is-open");
+    });
+
+    function resetApiKeyForm() {
+      selectedGroup = "";
+      apiKeyGroupText.textContent = "请选择资源组";
+      apiKeyGroupSelect.classList.remove("has-value");
+      apiKeyGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+      apiKeyDescTextarea.value = "";
+      apiKeyDescCount.textContent = "0";
+      apiKeyConfirmBtn.disabled = true;
+    }
+
+    document.querySelector("#createApiKeyBtn").addEventListener("click", () => {
+      resetApiKeyForm();
+      openLayer(apiKeyModal);
+    });
+
+    document.querySelectorAll(".js-close-apikey").forEach((button) => {
+      button.addEventListener("click", () => {
+        closeLayer(apiKeyModal);
+      });
+    });
+
+    document.querySelector(".js-confirm-apikey").addEventListener("click", () => {
+      closeLayer(apiKeyModal);
+      showToast();
+    });
+
+    document.querySelectorAll(".js-close-billing").forEach((button) => {
+      button.addEventListener("click", () => closeLayer(billingModal));
+    });
+
+    document.querySelectorAll(".js-delete").forEach((button) => {
+      button.addEventListener("click", () => openLayer(deleteModal));
+    });
+
+    document.querySelectorAll(".js-close-delete").forEach((button) => {
+      button.addEventListener("click", () => closeLayer(deleteModal));
+    });
+
+    document.querySelector("#confirmDeleteBtn").addEventListener("click", () => {
+      closeLayer(deleteModal);
+      showToast();
+    });
+  </script>
+</body>
+</html>
