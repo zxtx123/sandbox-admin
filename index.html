@@ -432,6 +432,214 @@
       display: none;
     }
 
+    .quota-view {
+      min-height: calc(100vh - 99px);
+      padding: 20px 22px 24px;
+      background: var(--page);
+    }
+
+    .quota-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .quota-summary-card {
+      min-height: 92px;
+      border: 1px solid #e1e7ef;
+      border-radius: 6px;
+      padding: 16px 18px;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(31, 45, 61, 0.05);
+    }
+
+    .quota-summary-label {
+      color: #7b8490;
+      font-size: 12px;
+    }
+
+    .quota-summary-value {
+      margin-top: 9px;
+      color: #202a35;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .quota-summary-value span {
+      margin-left: 4px;
+      color: #8b95a1;
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .quota-panel {
+      display: flex;
+      flex-direction: column;
+      min-height: 570px;
+      border: 1px solid #dfe5eb;
+      background: #ffffff;
+      box-shadow: 0 3px 10px rgba(31, 45, 61, 0.08);
+    }
+
+    .quota-intro {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 58px;
+      border-bottom: 1px solid #e5e9ef;
+      padding: 0 18px;
+    }
+
+    .quota-intro-title {
+      color: #202020;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .quota-intro-text {
+      margin-top: 5px;
+      color: #8e96a3;
+      font-size: 12px;
+    }
+
+    .quota-default-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      border-radius: 3px;
+      padding: 0 8px;
+      color: #237b4b;
+      font-size: 11px;
+      background: #eaf8ef;
+    }
+
+    .quota-custom-badge {
+      display: inline-flex;
+      align-items: center;
+      height: 22px;
+      border-radius: 3px;
+      padding: 0 8px;
+      color: #9a6700;
+      font-size: 11px;
+      background: #fff6d8;
+    }
+
+    .quota-table .quota-value {
+      color: #202a35;
+      font-weight: 600;
+    }
+
+    .quota-table .quota-unit {
+      margin-left: 4px;
+      color: #8e96a3;
+      font-size: 12px;
+    }
+
+    .quota-edit-modal {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      z-index: 31;
+      display: none;
+      flex-direction: column;
+      width: 520px;
+      max-width: calc(100vw - 60px);
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      transform: translate(-50%, -50%);
+      overflow: hidden;
+    }
+
+    .quota-edit-modal.is-open {
+      display: flex;
+    }
+
+    .quota-edit-header,
+    .quota-edit-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #edf0f5;
+      padding: 0 24px;
+    }
+
+    .quota-edit-header {
+      height: 56px;
+      color: #202020;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .quota-edit-body {
+      display: grid;
+      gap: 20px;
+      padding: 26px 24px 30px;
+    }
+
+    .quota-edit-row {
+      display: grid;
+      grid-template-columns: 132px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+    }
+
+    .quota-edit-label {
+      color: #3d4652;
+      font-size: 13px;
+      text-align: right;
+    }
+
+    .quota-edit-input,
+    .quota-edit-select {
+      width: 100%;
+      height: 36px;
+      border: 1px solid #dcdfe6;
+      border-radius: 6px;
+      padding: 0 12px;
+      color: #202020;
+      font: inherit;
+      font-size: 13px;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .quota-edit-input:focus,
+    .quota-edit-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(15, 115, 246, 0.12);
+    }
+
+    .quota-edit-hint {
+      margin: -8px 0 0 146px;
+      color: #9aa3ad;
+      font-size: 12px;
+    }
+
+    .quota-edit-footer {
+      justify-content: flex-end;
+      height: 62px;
+      border-top: 1px solid #edf0f5;
+      border-bottom: 0;
+      gap: 10px;
+      background: #fafbfc;
+    }
+
+    @media (max-width: 860px) {
+      .quota-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .quota-intro {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        padding: 12px 18px;
+      }
+    }
+
     .view.is-active {
       display: block;
     }
@@ -1576,6 +1784,13 @@
             <span class="label">API密钥</span>
           </button>
         </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="配额管理">
+            <svg class="icon small"><use href="#icon-settings"></use></svg>
+            <span class="label">配额管理</span>
+          </button>
+        </div>
       </div>
 
       <div class="secondary-footer">
@@ -1602,6 +1817,9 @@
         </div>
         <div class="crumb" data-crumb="apikey">
           <span class="crumb-current">API密钥</span>
+        </div>
+        <div class="crumb" data-crumb="quota">
+          <span class="crumb-current">配额管理</span>
         </div>
         <div class="crumb" data-crumb="plain" id="crumbTitle">平台概览</div>
       </div>
@@ -1701,14 +1919,15 @@
           <div class="table-wrap">
             <table class="data-table">
               <colgroup>
-                <col style="width: 15%" />
-                <col style="width: 15%" />
-                <col style="width: 12%" />
+                <col style="width: 13%" />
+                <col style="width: 13%" />
                 <col style="width: 10%" />
-                <col style="width: 10%" />
-                <col style="width: 12%" />
-                <col style="width: 14%" />
-                <col style="width: 12%" />
+                <col style="width: 8%" />
+                <col style="width: 8%" />
+                <col style="width: 11%" />
+                <col style="width: 13%" />
+                <col style="width: 11%" />
+                <col style="width: 13%" />
               </colgroup>
               <thead>
                 <tr>
@@ -1720,36 +1939,37 @@
                   <th>MetaData</th>
                   <th>启动时间</th>
                   <th>创建人</th>
+                  <th>操作</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>sbx-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td>张三</td>
+                  <td>sbx-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td>张三</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td>李四</td>
+                  <td>sbx-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td>李四</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td>王五</td>
+                  <td>sbx-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td>王五</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td>赵六</td>
+                  <td>sbx-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td>赵六</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td>钱七</td>
+                  <td>sbx-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td>钱七</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td>孙八</td>
+                  <td>sbx-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td>孙八</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td>周九</td>
+                  <td>sbx-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td>周九</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td>吴十</td>
+                  <td>sbx-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td>吴十</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
               </tbody>
             </table>
           </div>
@@ -1802,14 +2022,15 @@
           <div class="table-wrap">
             <table class="data-table">
               <colgroup>
-                <col style="width: 14%" />
-                <col style="width: 14%" />
+                <col style="width: 12%" />
+                <col style="width: 12%" />
                 <col style="width: 10%" />
                 <col style="width: 8%" />
                 <col style="width: 8%" />
-                <col style="width: 14%" />
-                <col style="width: 14%" />
+                <col style="width: 12%" />
+                <col style="width: 12%" />
                 <col style="width: 10%" />
+                <col style="width: 8%" />
                 <col style="width: 8%" />
               </colgroup>
               <thead>
@@ -1823,36 +2044,37 @@
                   <th>修改时间</th>
                   <th>创建人</th>
                   <th>可见性</th>
+                  <th>操作</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>tpl-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-01 10:00:00</td><td>2023-08-05 14:30:00</td><td>张三</td><td>public</td>
+                  <td>tpl-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-01 10:00:00</td><td>2023-08-05 14:30:00</td><td>张三</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-01 11:30:00</td><td>2023-08-06 09:15:00</td><td>李四</td><td>private</td>
+                  <td>tpl-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-01 11:30:00</td><td>2023-08-06 09:15:00</td><td>李四</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-02 09:15:00</td><td>2023-08-07 16:20:00</td><td>王五</td><td>public</td>
+                  <td>tpl-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-02 09:15:00</td><td>2023-08-07 16:20:00</td><td>王五</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>2023-08-02 14:20:00</td><td>2023-08-08 10:45:00</td><td>赵六</td><td>private</td>
+                  <td>tpl-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>2023-08-02 14:20:00</td><td>2023-08-08 10:45:00</td><td>赵六</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>2023-08-03 16:45:00</td><td>2023-08-09 11:00:00</td><td>钱七</td><td>public</td>
+                  <td>tpl-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>2023-08-03 16:45:00</td><td>2023-08-09 11:00:00</td><td>钱七</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-04 10:10:00</td><td>2023-08-10 15:30:00</td><td>孙八</td><td>private</td>
+                  <td>tpl-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-04 10:10:00</td><td>2023-08-10 15:30:00</td><td>孙八</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-04 11:05:00</td><td>2023-08-11 08:50:00</td><td>周九</td><td>public</td>
+                  <td>tpl-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-04 11:05:00</td><td>2023-08-11 08:50:00</td><td>周九</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-05 09:30:00</td><td>2023-08-12 13:10:00</td><td>吴十</td><td>private</td>
+                  <td>tpl-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-05 09:30:00</td><td>2023-08-12 13:10:00</td><td>吴十</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
               </tbody>
             </table>
           </div>
@@ -2243,10 +2465,115 @@
           </div>
         </div>
       </section>
+      <section class="quota-view view" data-view="quota" aria-label="配额管理">
+        <div class="quota-panel">
+          <div class="quota-intro">
+            <div>
+              <div class="quota-intro-title">资源组配额</div>
+              <div class="quota-intro-text">每个资源组默认使用平台标准配额，可按实际业务需要单独调整。</div>
+            </div>
+            <span class="quota-default-badge">默认配额：20 个并发 / 24 小时</span>
+          </div>
+          <div class="table-toolbar">
+            <div class="toolbar-actions">
+              <span style="color: #7b8490; font-size: 12px;">共 5 个资源组</span>
+            </div>
+            <div class="toolbar-filters">
+              <div class="filter-combo">
+                <span class="filter-label">资源组</span>
+                <button class="filter-field select" type="button">
+                  <span>全部资源组</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <button class="refresh-btn" type="button" title="刷新">
+                <svg class="icon small"><use href="#icon-refresh"></use></svg>
+              </button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table quota-table">
+              <colgroup>
+                <col style="width: 24%" />
+                <col style="width: 28%" />
+                <col style="width: 28%" />
+                <col style="width: 20%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>资源组</th>
+                  <th>并发沙箱数量上限</th>
+                  <th>单沙箱生命周期上限</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>研发部</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="研发部" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                </tr>
+                <tr>
+                  <td>数据组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="数据组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                </tr>
+                <tr>
+                  <td>前端组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="前端组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                </tr>
+                <tr>
+                  <td>测试组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="测试组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                </tr>
+                <tr>
+                  <td>默认资源组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="默认资源组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <div class="page-total">共 <strong>5</strong> 条记录　 第 <span>1</span> / 1 页</div>
+            <div class="pagination">
+              <button class="page-size" type="button">10 条/页 <svg class="chevron"><use href="#icon-chevron"></use></svg></button>
+              <button class="page-btn" type="button">‹</button>
+              <button class="page-num is-current" type="button">1</button>
+              <button class="page-btn" type="button">›</button>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
   <div class="overlay" id="modalOverlay"></div>
+
+  <section class="quota-edit-modal" id="quotaEditModal" role="dialog" aria-modal="true" aria-labelledby="quotaEditTitle">
+    <header class="quota-edit-header">
+      <div id="quotaEditTitle">调整资源组配额</div>
+      <button class="modal-close js-close-quota" type="button" aria-label="关闭">×</button>
+    </header>
+    <div class="quota-edit-body">
+      <div class="quota-edit-row">
+        <label class="quota-edit-label" for="quotaGroup">资源组</label>
+        <input class="quota-edit-input" id="quotaGroup" type="text" readonly />
+      </div>
+      <div class="quota-edit-row">
+        <label class="quota-edit-label" for="quotaConcurrency">并发沙箱数量上限</label>
+        <input class="quota-edit-input" id="quotaConcurrency" type="number" min="1" max="1000" step="1" />
+      </div>
+      <div class="quota-edit-row">
+        <label class="quota-edit-label" for="quotaLifetime">单沙箱生命周期上限</label>
+        <select class="quota-edit-select" id="quotaLifetime">
+          <option value="1">1 小时</option>
+          <option value="4">4 小时</option>
+          <option value="12">12 小时</option>
+          <option value="24">24 小时</option>
+          <option value="48">48 小时</option>
+          <option value="72">72 小时</option>
+        </select>
+      </div>
+      <div class="quota-edit-hint">调整后仅对当前资源组生效，默认配额不会被修改。</div>
+    </div>
+    <footer class="quota-edit-footer">
+      <button class="plain-btn js-close-quota" type="button">取消</button>
+      <button class="confirm-btn" id="saveQuotaBtn" type="button">保存</button>
+    </footer>
+  </section>
 
   <section class="apikey-modal" id="apiKeyModal" role="dialog" aria-modal="true" aria-labelledby="apiKeyTitle">
     <header class="apikey-header">
@@ -2391,7 +2718,7 @@
 
   <div class="toast" id="successToast" role="status">
     <span class="toast-icon">✓</span>
-    <span>删除成功!</span>
+    <span id="successToastText">删除成功!</span>
   </div>
 
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -2421,12 +2748,14 @@
     const overlay = document.querySelector("#modalOverlay");
     const billingModal = document.querySelector("#billingModal");
     const apiKeyModal = document.querySelector("#apiKeyModal");
+    const quotaEditModal = document.querySelector("#quotaEditModal");
     const deleteModal = document.querySelector("#deleteModal");
     const successToast = document.querySelector("#successToast");
+    const successToastText = document.querySelector("#successToastText");
     let toastTimer;
 
     function showContent(page) {
-      const target = page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : "plain";
+      const target = page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : page === "配额管理" ? "quota" : "plain";
       document.querySelectorAll(".view").forEach((view) => {
         view.classList.toggle("is-active", view.dataset.view === target);
       });
@@ -2502,12 +2831,13 @@
 
     function closeLayer(modal) {
       modal.classList.remove("is-open");
-      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open")) {
+      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open") && !quotaEditModal.classList.contains("is-open")) {
         overlay.classList.remove("is-open");
       }
     }
 
-    function showToast() {
+    function showToast(message = "删除成功!") {
+      successToastText.textContent = message;
       window.clearTimeout(toastTimer);
       successToast.classList.add("is-show");
       toastTimer = window.setTimeout(() => {
@@ -2600,8 +2930,49 @@
       button.addEventListener("click", () => closeLayer(billingModal));
     });
 
+    const quotaGroupInput = document.querySelector("#quotaGroup");
+    const quotaConcurrencyInput = document.querySelector("#quotaConcurrency");
+    const quotaLifetimeInput = document.querySelector("#quotaLifetime");
+
+    let activeQuotaRow;
+
+    document.querySelectorAll(".js-edit-quota").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeQuotaRow = button.closest("tr");
+        quotaGroupInput.value = button.dataset.group;
+        quotaConcurrencyInput.value = button.dataset.concurrency;
+        quotaLifetimeInput.value = button.dataset.lifetime;
+        openLayer(quotaEditModal);
+      });
+    });
+
+    document.querySelectorAll(".js-close-quota").forEach((button) => {
+      button.addEventListener("click", () => closeLayer(quotaEditModal));
+    });
+
+    document.querySelector("#saveQuotaBtn").addEventListener("click", () => {
+      if (!quotaConcurrencyInput.value || Number(quotaConcurrencyInput.value) < 1) {
+        quotaConcurrencyInput.focus();
+        return;
+      }
+      if (activeQuotaRow) {
+        activeQuotaRow.querySelectorAll(".quota-value")[0].textContent = quotaConcurrencyInput.value;
+        activeQuotaRow.querySelectorAll(".quota-value")[1].textContent = quotaLifetimeInput.value;
+      }
+      closeLayer(quotaEditModal);
+      showToast("配额已更新!");
+    });
+
+    const deleteMessage = deleteModal.querySelector(".confirm-text");
+    let activeDeleteRow;
+
     document.querySelectorAll(".js-delete").forEach((button) => {
-      button.addEventListener("click", () => openLayer(deleteModal));
+      button.addEventListener("click", () => {
+        activeDeleteRow = button.closest("tr");
+        const rowName = activeDeleteRow?.querySelector("td")?.textContent.trim() || "当前数据";
+        deleteMessage.innerHTML = `确认删除“${rowName}”的数据，<br>确定删除后，所选内容将无法恢复，请谨慎操作。`;
+        openLayer(deleteModal);
+      });
     });
 
     document.querySelectorAll(".js-close-delete").forEach((button) => {
@@ -2609,8 +2980,10 @@
     });
 
     document.querySelector("#confirmDeleteBtn").addEventListener("click", () => {
+      activeDeleteRow?.remove();
+      activeDeleteRow = undefined;
       closeLayer(deleteModal);
-      showToast();
+      showToast("删除成功!");
     });
   </script>
 </body>
