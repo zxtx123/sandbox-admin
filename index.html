@@ -503,17 +503,6 @@
       font-size: 12px;
     }
 
-    .quota-default-badge {
-      display: inline-flex;
-      align-items: center;
-      height: 22px;
-      border-radius: 3px;
-      padding: 0 8px;
-      color: #237b4b;
-      font-size: 11px;
-      background: #eaf8ef;
-    }
-
     .quota-custom-badge {
       display: inline-flex;
       align-items: center;
@@ -809,6 +798,54 @@
     }
 
     .action-link.danger {
+      color: #ff3333;
+    }
+
+    .sandbox-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .sandbox-status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .sandbox-status.running {
+      color: #18a058;
+    }
+
+    .sandbox-status.paused {
+      color: #9a6700;
+    }
+
+    .template-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .template-status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .template-status.available {
+      color: #18a058;
+    }
+
+    .template-status.failed {
       color: #ff3333;
     }
 
@@ -1648,6 +1685,95 @@
       padding-left: 0;
     }
 
+    /* Sandbox navigation uses horizontal tabs while keeping the platform sidebar. */
+    .app {
+      grid-template-columns: 198px minmax(0, 1fr);
+      grid-template-rows: 56px 48px minmax(0, 1fr);
+    }
+
+    .secondary-sidebar {
+      grid-column: 2;
+      grid-row: 2;
+      height: 48px;
+      min-height: 48px;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+      background: #ffffff;
+    }
+
+    .secondary-scroll {
+      display: flex;
+      align-items: stretch;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: #c5cbd3 transparent;
+    }
+
+    .secondary-block {
+      flex: 0 0 auto;
+      border-bottom: 0;
+    }
+
+    .secondary-title,
+    .secondary-link {
+      width: auto;
+      min-width: 108px;
+      height: 48px;
+      border-bottom: 2px solid transparent;
+      padding: 0 18px;
+      justify-content: center;
+      gap: 0;
+      color: #56606c;
+      font-size: 13px;
+    }
+
+    .secondary-title .icon,
+    .secondary-title .chevron,
+    .secondary-link .icon,
+    .secondary-link .chevron {
+      display: none;
+    }
+
+    .secondary-title .label,
+    .secondary-link .label {
+      flex: none;
+      text-align: center;
+    }
+
+    .secondary-title:hover,
+    .secondary-link:hover {
+      color: var(--primary);
+      background: #f7fbff;
+    }
+
+    .secondary-title.is-active,
+    .secondary-link.is-active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: #ffffff;
+      font-weight: 600;
+    }
+
+    .secondary-title.is-active:hover,
+    .secondary-link.is-active:hover {
+      color: var(--primary-hover);
+      background: #ffffff;
+    }
+
+    .secondary-footer {
+      display: none;
+    }
+
+    .content {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+    .is-collapsed {
+      grid-template-columns: 198px minmax(0, 1fr);
+    }
+
   </style>
 </head>
 <body>
@@ -1894,6 +2020,13 @@
             </div>
             <div class="toolbar-filters">
               <div class="filter-combo">
+                <span class="filter-label">企业</span>
+                <button class="filter-field select" type="button">
+                  <span>选择企业</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <div class="filter-combo">
                 <span class="filter-label">资源组</span>
                 <button class="filter-field select" type="button">
                   <span>选择资源组</span>
@@ -1919,15 +2052,16 @@
           <div class="table-wrap">
             <table class="data-table">
               <colgroup>
-                <col style="width: 13%" />
-                <col style="width: 13%" />
+                <col style="width: 11%" />
+                <col style="width: 11%" />
+                <col style="width: 9%" />
+                <col style="width: 7%" />
+                <col style="width: 7%" />
                 <col style="width: 10%" />
-                <col style="width: 8%" />
-                <col style="width: 8%" />
                 <col style="width: 11%" />
-                <col style="width: 13%" />
-                <col style="width: 11%" />
-                <col style="width: 13%" />
+                <col style="width: 9%" />
+                <col style="width: 9%" />
+                <col style="width: 16%" />
               </colgroup>
               <thead>
                 <tr>
@@ -1939,37 +2073,38 @@
                   <th>MetaData</th>
                   <th>启动时间</th>
                   <th>创建人</th>
+                  <th>状态</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>sbx-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td>张三</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td>张三</td><td><span class="sandbox-status running">运行中</span></td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td>李四</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td>李四</td><td><span class="sandbox-status paused">已暂停</span></td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td>王五</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td>王五</td><td><span class="sandbox-status running">运行中</span></td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td>赵六</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td>赵六</td><td><span class="sandbox-status running">运行中</span></td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td>钱七</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td>钱七</td><td><span class="sandbox-status paused">已暂停</span></td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td>孙八</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td>孙八</td><td><span class="sandbox-status running">运行中</span></td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td>周九</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td>周九</td><td><span class="sandbox-status paused">已暂停</span></td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>sbx-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td>吴十</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>sbx-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td>吴十</td><td><span class="sandbox-status running">运行中</span></td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
               </tbody>
             </table>
           </div>
@@ -1997,6 +2132,13 @@
             </div>
             <div class="toolbar-filters">
               <div class="filter-combo">
+                <span class="filter-label">企业</span>
+                <button class="filter-field select" type="button">
+                  <span>选择企业</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
+              <div class="filter-combo">
                 <span class="filter-label">资源组</span>
                 <button class="filter-field select" type="button">
                   <span>选择资源组</span>
@@ -2021,18 +2163,18 @@
           </div>
           <div class="table-wrap">
             <table class="data-table">
-              <colgroup>
-                <col style="width: 12%" />
-                <col style="width: 12%" />
-                <col style="width: 10%" />
-                <col style="width: 8%" />
-                <col style="width: 8%" />
-                <col style="width: 12%" />
-                <col style="width: 12%" />
-                <col style="width: 10%" />
-                <col style="width: 8%" />
-                <col style="width: 8%" />
-              </colgroup>
+                <colgroup>
+                <col style="width: 11%" />
+                <col style="width: 11%" />
+                <col style="width: 9%" />
+                <col style="width: 7%" />
+                <col style="width: 7%" />
+                <col style="width: 11%" />
+                <col style="width: 11%" />
+                <col style="width: 9%" />
+                <col style="width: 9%" />
+                <col style="width: 15%" />
+                </colgroup>
               <thead>
                 <tr>
                   <th>模版ID</th>
@@ -2044,33 +2186,34 @@
                   <th>修改时间</th>
                   <th>创建人</th>
                   <th>可见性</th>
+                  <th>状态</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>tpl-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-01 10:00:00</td><td>2023-08-05 14:30:00</td><td>张三</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-01 10:00:00</td><td>2023-08-05 14:30:00</td><td>张三</td><td>public</td><td><span class="template-status available">可用</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-01 11:30:00</td><td>2023-08-06 09:15:00</td><td>李四</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-01 11:30:00</td><td>2023-08-06 09:15:00</td><td>李四</td><td>private</td><td><span class="template-status available">可用</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-02 09:15:00</td><td>2023-08-07 16:20:00</td><td>王五</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-02 09:15:00</td><td>2023-08-07 16:20:00</td><td>王五</td><td>public</td><td><span class="template-status available">可用</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>2023-08-02 14:20:00</td><td>2023-08-08 10:45:00</td><td>赵六</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td>4核</td><td>8G</td><td>2023-08-02 14:20:00</td><td>2023-08-08 10:45:00</td><td>赵六</td><td>private</td><td><span class="template-status failed">构建失败</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>2023-08-03 16:45:00</td><td>2023-08-09 11:00:00</td><td>钱七</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td>16核</td><td>32G</td><td>2023-08-03 16:45:00</td><td>2023-08-09 11:00:00</td><td>钱七</td><td>public</td><td><span class="template-status available">可用</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-04 10:10:00</td><td>2023-08-10 15:30:00</td><td>孙八</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td>4核</td><td>8G</td><td>2023-08-04 10:10:00</td><td>2023-08-10 15:30:00</td><td>孙八</td><td>private</td><td><span class="template-status available">可用</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-04 11:05:00</td><td>2023-08-11 08:50:00</td><td>周九</td><td>public</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td>8核</td><td>16G</td><td>2023-08-04 11:05:00</td><td>2023-08-11 08:50:00</td><td>周九</td><td>public</td><td><span class="template-status available">可用</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr>
-                  <td>tpl-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-05 09:30:00</td><td>2023-08-12 13:10:00</td><td>吴十</td><td>private</td><td><a class="action-link danger js-delete">删除</a></td>
+                  <td>tpl-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td>2核</td><td>4G</td><td>2023-08-05 09:30:00</td><td>2023-08-12 13:10:00</td><td>吴十</td><td>private</td><td><span class="template-status failed">构建失败</span></td><td><a class="action-link danger js-delete">删除</a></td>
                 </tr>
                 <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                 <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -2091,6 +2234,13 @@
       </section>
       <section class="usage-view view" data-view="usage" aria-label="用量统计" style="padding: 20px; background: #f5f7fa; min-height: calc(100vh - 99px);">
         <div style="background: #fff; padding: 16px 24px; border-radius: 4px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #606266; font-size: 14px;">企业</span>
+            <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff; cursor: pointer;">
+              <span>全部企业</span>
+              <svg class="chevron" style="width: 14px; height: 14px; color: #c0c4cc;"><use href="#icon-chevron"></use></svg>
+            </div>
+          </div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <span style="color: #606266; font-size: 14px;">资源组</span>
             <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff; cursor: pointer;">
@@ -2214,6 +2364,13 @@
       <section class="log-view view" data-view="log" aria-label="运行日志" style="padding: 16px 22px; background: #fff; min-height: calc(100vh - 99px);">
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 12px;">
           <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="color: #606266; font-size: 13px;">企业</span>
+            <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff; cursor: pointer;">
+              <span>全部企业</span>
+              <svg class="chevron" style="width: 14px; height: 14px; color: #c0c4cc;"><use href="#icon-chevron"></use></svg>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
             <span style="color: #606266; font-size: 13px;">资源组</span>
             <div style="border: 1px solid #dcdfe6; border-radius: 4px; padding: 4px 12px; font-size: 13px; color: #303133; display: flex; align-items: center; gap: 8px; background: #fff; cursor: pointer;">
               <span>全部资源组</span>
@@ -2320,6 +2477,13 @@
               <button class="primary-btn" id="createApiKeyBtn" type="button">＋ 创建APIKey</button>
             </div>
             <div class="toolbar-filters">
+              <div class="filter-combo">
+                <span class="filter-label">企业</span>
+                <button class="filter-field select" type="button">
+                  <span>选择企业</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
               <div class="filter-combo">
                 <span class="filter-label">资源组</span>
                 <button class="filter-field select" type="button">
@@ -2472,13 +2636,19 @@
               <div class="quota-intro-title">资源组配额</div>
               <div class="quota-intro-text">每个资源组默认使用平台标准配额，可按实际业务需要单独调整。</div>
             </div>
-            <span class="quota-default-badge">默认配额：20 个并发 / 24 小时</span>
           </div>
           <div class="table-toolbar">
             <div class="toolbar-actions">
               <span style="color: #7b8490; font-size: 12px;">共 5 个资源组</span>
             </div>
             <div class="toolbar-filters">
+              <div class="filter-combo">
+                <span class="filter-label">企业</span>
+                <button class="filter-field select" type="button">
+                  <span>选择企业</span>
+                  <svg class="chevron"><use href="#icon-chevron"></use></svg>
+                </button>
+              </div>
               <div class="filter-combo">
                 <span class="filter-label">资源组</span>
                 <button class="filter-field select" type="button">
@@ -2494,34 +2664,32 @@
           <div class="table-wrap">
             <table class="data-table quota-table">
               <colgroup>
-                <col style="width: 24%" />
-                <col style="width: 28%" />
-                <col style="width: 28%" />
+                <col style="width: 40%" />
+                <col style="width: 40%" />
                 <col style="width: 20%" />
               </colgroup>
               <thead>
                 <tr>
                   <th>资源组</th>
                   <th>并发沙箱数量上限</th>
-                  <th>单沙箱生命周期上限</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>研发部</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="研发部" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                  <td>研发部</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="研发部" data-concurrency="20">调整配额</a></td>
                 </tr>
                 <tr>
-                  <td>数据组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="数据组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                  <td>数据组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="数据组" data-concurrency="20">调整配额</a></td>
                 </tr>
                 <tr>
-                  <td>前端组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="前端组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                  <td>前端组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="前端组" data-concurrency="20">调整配额</a></td>
                 </tr>
                 <tr>
-                  <td>测试组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="测试组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                  <td>测试组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="测试组" data-concurrency="20">调整配额</a></td>
                 </tr>
                 <tr>
-                  <td>默认资源组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><span class="quota-value">24</span><span class="quota-unit">小时</span></td><td><a class="action-link js-edit-quota" data-group="默认资源组" data-concurrency="20" data-lifetime="24">调整配额</a></td>
+                  <td>默认资源组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="默认资源组" data-concurrency="20">调整配额</a></td>
                 </tr>
               </tbody>
             </table>
@@ -2555,17 +2723,6 @@
       <div class="quota-edit-row">
         <label class="quota-edit-label" for="quotaConcurrency">并发沙箱数量上限</label>
         <input class="quota-edit-input" id="quotaConcurrency" type="number" min="1" max="1000" step="1" />
-      </div>
-      <div class="quota-edit-row">
-        <label class="quota-edit-label" for="quotaLifetime">单沙箱生命周期上限</label>
-        <select class="quota-edit-select" id="quotaLifetime">
-          <option value="1">1 小时</option>
-          <option value="4">4 小时</option>
-          <option value="12">12 小时</option>
-          <option value="24">24 小时</option>
-          <option value="48">48 小时</option>
-          <option value="72">72 小时</option>
-        </select>
       </div>
       <div class="quota-edit-hint">调整后仅对当前资源组生效，默认配额不会被修改。</div>
     </div>
@@ -2706,7 +2863,7 @@
     <div class="confirm-body">
       <span class="warn-icon">!</span>
       <div>
-        <p class="confirm-title">确认删除!</p>
+        <p class="confirm-title" id="confirmActionTitle">确认删除!</p>
         <p class="confirm-text">确认删除XXXXX名称的数据，<br>确定删除后，所选内容将无法恢复，请谨慎操作。</p>
       </div>
     </div>
@@ -2932,7 +3089,6 @@
 
     const quotaGroupInput = document.querySelector("#quotaGroup");
     const quotaConcurrencyInput = document.querySelector("#quotaConcurrency");
-    const quotaLifetimeInput = document.querySelector("#quotaLifetime");
 
     let activeQuotaRow;
 
@@ -2941,7 +3097,6 @@
         activeQuotaRow = button.closest("tr");
         quotaGroupInput.value = button.dataset.group;
         quotaConcurrencyInput.value = button.dataset.concurrency;
-        quotaLifetimeInput.value = button.dataset.lifetime;
         openLayer(quotaEditModal);
       });
     });
@@ -2957,19 +3112,35 @@
       }
       if (activeQuotaRow) {
         activeQuotaRow.querySelectorAll(".quota-value")[0].textContent = quotaConcurrencyInput.value;
-        activeQuotaRow.querySelectorAll(".quota-value")[1].textContent = quotaLifetimeInput.value;
       }
       closeLayer(quotaEditModal);
       showToast("配额已更新!");
     });
 
     const deleteMessage = deleteModal.querySelector(".confirm-text");
+    const confirmActionTitle = deleteModal.querySelector("#confirmActionTitle");
     let activeDeleteRow;
+    let activeSandboxToggle;
+
+    document.querySelectorAll(".js-toggle-sandbox").forEach((button) => {
+      button.addEventListener("click", () => {
+        activeSandboxToggle = button;
+        const row = button.closest("tr");
+        const sandboxId = row?.querySelector("td")?.textContent.trim() || "当前沙箱";
+        const isPausing = button.textContent.trim() === "暂停";
+        confirmActionTitle.textContent = isPausing ? "确认暂停!" : "确认恢复!";
+        deleteMessage.innerHTML = isPausing
+          ? `确认暂停“${sandboxId}”沙箱，<br>暂停后该沙箱将停止运行，请确认操作。`
+          : `确认恢复“${sandboxId}”沙箱，<br>恢复后该沙箱将继续运行，请确认操作。`;
+        openLayer(deleteModal);
+      });
+    });
 
     document.querySelectorAll(".js-delete").forEach((button) => {
       button.addEventListener("click", () => {
         activeDeleteRow = button.closest("tr");
         const rowName = activeDeleteRow?.querySelector("td")?.textContent.trim() || "当前数据";
+        confirmActionTitle.textContent = "确认删除!";
         deleteMessage.innerHTML = `确认删除“${rowName}”的数据，<br>确定删除后，所选内容将无法恢复，请谨慎操作。`;
         openLayer(deleteModal);
       });
@@ -2980,6 +3151,18 @@
     });
 
     document.querySelector("#confirmDeleteBtn").addEventListener("click", () => {
+      if (activeSandboxToggle) {
+        const status = activeSandboxToggle.closest("tr")?.querySelector(".sandbox-status");
+        const isPausing = activeSandboxToggle.textContent.trim() === "暂停";
+        status?.classList.toggle("running", !isPausing);
+        status?.classList.toggle("paused", isPausing);
+        if (status) status.textContent = isPausing ? "已暂停" : "运行中";
+        activeSandboxToggle.textContent = isPausing ? "恢复" : "暂停";
+        activeSandboxToggle = undefined;
+        closeLayer(deleteModal);
+        showToast(isPausing ? "沙箱已暂停!" : "沙箱已恢复!");
+        return;
+      }
       activeDeleteRow?.remove();
       activeDeleteRow = undefined;
       closeLayer(deleteModal);
