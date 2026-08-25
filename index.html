@@ -482,27 +482,6 @@
       box-shadow: 0 3px 10px rgba(31, 45, 61, 0.08);
     }
 
-    .quota-intro {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      min-height: 58px;
-      border-bottom: 1px solid #e5e9ef;
-      padding: 0 18px;
-    }
-
-    .quota-intro-title {
-      color: #202020;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .quota-intro-text {
-      margin-top: 5px;
-      color: #8e96a3;
-      font-size: 12px;
-    }
-
     .quota-custom-badge {
       display: inline-flex;
       align-items: center;
@@ -620,13 +599,6 @@
         grid-template-columns: 1fr;
       }
 
-      .quota-intro {
-        align-items: flex-start;
-        flex-direction: column;
-        justify-content: center;
-        gap: 6px;
-        padding: 12px 18px;
-      }
     }
 
     .view.is-active {
@@ -2682,15 +2654,8 @@
       </section>
       <section class="quota-view view" data-view="quota" aria-label="配额管理">
         <div class="quota-panel">
-          <div class="quota-intro">
-            <div>
-              <div class="quota-intro-title">资源组配额</div>
-              <div class="quota-intro-text">每个资源组默认使用平台标准配额，可按实际业务需要单独调整。</div>
-            </div>
-          </div>
           <div class="table-toolbar">
             <div class="toolbar-actions">
-              <span style="color: #7b8490; font-size: 12px;">共 5 个资源组</span>
             </div>
             <div class="toolbar-filters">
               <div class="filter-combo">
