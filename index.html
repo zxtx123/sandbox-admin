@@ -761,6 +761,28 @@
       color: #38424f;
     }
 
+    .template-table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    .template-table th,
+    .template-table td {
+      padding-right: 12px;
+      padding-left: 12px;
+    }
+
+    .template-table th:nth-child(1),
+    .template-table td:nth-child(1) {
+      padding-right: 4px;
+      padding-left: 10px;
+    }
+
+    .template-table th:nth-child(2),
+    .template-table td:nth-child(2) {
+      padding-left: 6px;
+    }
+
     .data-table th,
     .data-table td {
       height: 44px;
@@ -2192,10 +2214,9 @@
             </div>
           </div>
           <div class="table-wrap">
-            <table class="data-table">
-                <colgroup>
+            <table class="data-table template-table">
+              <colgroup>
                 <col style="width: 3%" />
-                <col style="width: 12%" />
                 <col style="width: 12%" />
                 <col style="width: 8%" />
                 <col style="width: 8%" />
