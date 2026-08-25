@@ -559,6 +559,12 @@
       text-align: right;
     }
 
+    .quota-edit-label.required::before {
+      content: "*";
+      margin-right: 4px;
+      color: #ff3333;
+    }
+
     .quota-edit-input,
     .quota-edit-select {
       width: 100%;
@@ -1947,6 +1953,13 @@
             <span class="label">配额管理</span>
           </button>
         </div>
+
+        <div class="secondary-block">
+          <button class="secondary-title" type="button" data-leaf="平台设置">
+            <svg class="icon small"><use href="#icon-settings"></use></svg>
+            <span class="label">平台设置</span>
+          </button>
+        </div>
       </div>
 
       <div class="secondary-footer">
@@ -1976,6 +1989,9 @@
         </div>
         <div class="crumb" data-crumb="quota">
           <span class="crumb-current">配额管理</span>
+        </div>
+        <div class="crumb" data-crumb="platform">
+          <span class="crumb-current">平台设置</span>
         </div>
         <div class="crumb" data-crumb="plain" id="crumbTitle">平台概览</div>
       </div>
@@ -2650,6 +2666,7 @@
         <div class="quota-panel">
           <div class="table-toolbar">
             <div class="toolbar-actions">
+              <button class="primary-btn" id="createQuotaBtn" type="button">＋ 新增配额</button>
             </div>
             <div class="toolbar-filters">
               <div class="filter-combo">
@@ -2674,12 +2691,14 @@
           <div class="table-wrap">
             <table class="data-table quota-table">
               <colgroup>
-                <col style="width: 40%" />
-                <col style="width: 40%" />
-                <col style="width: 20%" />
+                <col style="width: 33%" />
+                <col style="width: 30%" />
+                <col style="width: 22%" />
+                <col style="width: 15%" />
               </colgroup>
               <thead>
                 <tr>
+                  <th>企业</th>
                   <th>资源组</th>
                   <th>并发沙箱数量上限</th>
                   <th>操作</th>
@@ -2687,19 +2706,19 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>研发部</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="研发部" data-concurrency="20">调整配额</a></td>
+                  <td>360集团</td><td>研发部</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="研发部" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>数据组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="数据组" data-concurrency="20">调整配额</a></td>
+                  <td>360集团</td><td>数据组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="数据组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>前端组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="前端组" data-concurrency="20">调整配额</a></td>
+                  <td>360集团</td><td>前端组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="前端组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>测试组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="测试组" data-concurrency="20">调整配额</a></td>
+                  <td>360集团</td><td>测试组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="测试组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>默认资源组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-group="默认资源组" data-concurrency="20">调整配额</a></td>
+                  <td>360集团</td><td>默认资源组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="默认资源组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
               </tbody>
             </table>
@@ -2715,23 +2734,99 @@
           </div>
         </div>
       </section>
+      <section class="quota-view view" data-view="platform" aria-label="平台设置">
+        <div class="quota-panel">
+          <div class="table-toolbar">
+            <div class="toolbar-actions">
+              <span style="color: #7b8490; font-size: 12px;">每个企业默认并发沙箱数量为 10 个</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table quota-table platform-settings-table">
+              <colgroup>
+                <col style="width: 60%" />
+                <col style="width: 25%" />
+                <col style="width: 15%" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>企业</th>
+                  <th>默认并发沙箱数量</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>360集团</td><td><span class="platform-default-value">10</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-platform" data-enterprise="360集团" data-default="10">编辑</a></td></tr>
+                <tr><td>外网企业1</td><td><span class="platform-default-value">10</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-platform" data-enterprise="外网企业1" data-default="10">编辑</a></td></tr>
+                <tr><td>外网企业2</td><td><span class="platform-default-value">10</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-platform" data-enterprise="外网企业2" data-default="10">编辑</a></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
     </main>
   </div>
 
   <div class="overlay" id="modalOverlay"></div>
 
+  <section class="quota-edit-modal" id="platformSettingsModal" role="dialog" aria-modal="true" aria-labelledby="platformSettingsTitle">
+    <header class="quota-edit-header">
+      <div id="platformSettingsTitle">编辑企业默认配额</div>
+      <button class="modal-close js-close-platform" type="button" aria-label="关闭">×</button>
+    </header>
+    <div class="quota-edit-body">
+      <div class="quota-edit-row">
+        <label class="quota-edit-label" for="platformEnterprise">企业</label>
+        <input class="quota-edit-input" id="platformEnterprise" type="text" readonly />
+      </div>
+      <div class="quota-edit-row">
+        <label class="quota-edit-label required" for="platformDefaultConcurrency">默认并发沙箱数量</label>
+        <input class="quota-edit-input" id="platformDefaultConcurrency" type="number" min="1" max="1000" step="1" value="10" />
+      </div>
+    </div>
+    <footer class="quota-edit-footer">
+      <button class="plain-btn js-close-platform" type="button">取消</button>
+      <button class="confirm-btn" id="savePlatformSettingsBtn" type="button">保存</button>
+    </footer>
+  </section>
   <section class="quota-edit-modal" id="quotaEditModal" role="dialog" aria-modal="true" aria-labelledby="quotaEditTitle">
     <header class="quota-edit-header">
-      <div id="quotaEditTitle">调整资源组配额</div>
+      <div id="quotaEditTitle">新增配额</div>
       <button class="modal-close js-close-quota" type="button" aria-label="关闭">×</button>
     </header>
     <div class="quota-edit-body">
       <div class="quota-edit-row">
-        <label class="quota-edit-label" for="quotaGroup">资源组</label>
-        <input class="quota-edit-input" id="quotaGroup" type="text" readonly />
+        <label class="quota-edit-label required" for="quotaEnterpriseSelect">企业</label>
+        <div class="apikey-select-wrap">
+          <div class="apikey-select" id="quotaEnterpriseSelect" tabindex="0" role="listbox" aria-label="选择企业">
+            <span class="apikey-select-text" id="quotaEnterpriseText">请选择企业</span>
+            <svg class="chevron"><use href="#icon-chevron"></use></svg>
+          </div>
+          <div class="apikey-dropdown" id="quotaEnterpriseDropdown">
+            <div class="apikey-dropdown-item" data-value="360集团">360集团</div>
+            <div class="apikey-dropdown-item" data-value="外网企业1">外网企业1</div>
+            <div class="apikey-dropdown-item" data-value="外网企业2">外网企业2</div>
+          </div>
+        </div>
       </div>
       <div class="quota-edit-row">
-        <label class="quota-edit-label" for="quotaConcurrency">并发沙箱数量上限</label>
+        <label class="quota-edit-label required" for="quotaGroupSelect">资源组</label>
+        <div class="apikey-select-wrap">
+          <div class="apikey-select" id="quotaGroupSelect" tabindex="0" role="listbox" aria-label="选择资源组">
+            <span class="apikey-select-text" id="quotaGroupText">请选择资源组</span>
+            <svg class="chevron"><use href="#icon-chevron"></use></svg>
+          </div>
+          <div class="apikey-dropdown" id="quotaGroupDropdown">
+            <div class="apikey-dropdown-item" data-value="研发部">研发部</div>
+            <div class="apikey-dropdown-item" data-value="数据组">数据组</div>
+            <div class="apikey-dropdown-item" data-value="前端组">前端组</div>
+            <div class="apikey-dropdown-item" data-value="测试组">测试组</div>
+            <div class="apikey-dropdown-item" data-value="默认资源组">默认资源组</div>
+          </div>
+        </div>
+      </div>
+      <div class="quota-edit-row">
+        <label class="quota-edit-label required" for="quotaConcurrency">并发沙箱数量上限</label>
         <input class="quota-edit-input" id="quotaConcurrency" type="number" min="1" max="1000" step="1" />
       </div>
     </div>
@@ -2915,13 +3010,14 @@
     const billingModal = document.querySelector("#billingModal");
     const apiKeyModal = document.querySelector("#apiKeyModal");
     const quotaEditModal = document.querySelector("#quotaEditModal");
+    const platformSettingsModal = document.querySelector("#platformSettingsModal");
     const deleteModal = document.querySelector("#deleteModal");
     const successToast = document.querySelector("#successToast");
     const successToastText = document.querySelector("#successToastText");
     let toastTimer;
 
     function showContent(page) {
-      const target = page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : page === "配额管理" ? "quota" : "plain";
+      const target = page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : page === "配额管理" ? "quota" : page === "平台设置" ? "platform" : "plain";
       document.querySelectorAll(".view").forEach((view) => {
         view.classList.toggle("is-active", view.dataset.view === target);
       });
@@ -2997,7 +3093,7 @@
 
     function closeLayer(modal) {
       modal.classList.remove("is-open");
-      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open") && !quotaEditModal.classList.contains("is-open")) {
+      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open") && !quotaEditModal.classList.contains("is-open") && !platformSettingsModal.classList.contains("is-open")) {
         overlay.classList.remove("is-open");
       }
     }
@@ -3096,34 +3192,194 @@
       button.addEventListener("click", () => closeLayer(billingModal));
     });
 
-    const quotaGroupInput = document.querySelector("#quotaGroup");
+    const platformEnterpriseInput = document.querySelector("#platformEnterprise");
+    const platformDefaultConcurrencyInput = document.querySelector("#platformDefaultConcurrency");
+    let activePlatformRow;
+
+    document.querySelectorAll(".js-edit-platform").forEach((button) => {
+      button.addEventListener("click", () => {
+        activePlatformRow = button.closest("tr");
+        platformEnterpriseInput.value = button.dataset.enterprise;
+        platformDefaultConcurrencyInput.value = button.dataset.default;
+        openLayer(platformSettingsModal);
+      });
+    });
+
+    document.querySelectorAll(".js-close-platform").forEach((button) => {
+      button.addEventListener("click", () => closeLayer(platformSettingsModal));
+    });
+
+    document.querySelector("#savePlatformSettingsBtn").addEventListener("click", () => {
+      if (!platformDefaultConcurrencyInput.value || Number(platformDefaultConcurrencyInput.value) < 1) {
+        platformDefaultConcurrencyInput.focus();
+        return;
+      }
+      if (activePlatformRow) {
+        activePlatformRow.querySelector(".platform-default-value").textContent = platformDefaultConcurrencyInput.value;
+        activePlatformRow.querySelector(".js-edit-platform").dataset.default = platformDefaultConcurrencyInput.value;
+      }
+      closeLayer(platformSettingsModal);
+      showToast("企业默认配额已更新!");
+    });
+
+    const quotaTitle = document.querySelector("#quotaEditTitle");
+    const quotaEnterpriseSelect = document.querySelector("#quotaEnterpriseSelect");
+    const quotaEnterpriseText = document.querySelector("#quotaEnterpriseText");
+    const quotaEnterpriseDropdown = document.querySelector("#quotaEnterpriseDropdown");
+    const quotaGroupSelect = document.querySelector("#quotaGroupSelect");
+    const quotaGroupText = document.querySelector("#quotaGroupText");
+    const quotaGroupDropdown = document.querySelector("#quotaGroupDropdown");
     const quotaConcurrencyInput = document.querySelector("#quotaConcurrency");
+    const quotaTableBody = document.querySelector(".quota-table tbody");
 
     let activeQuotaRow;
+    let editingQuota = false;
+
+    function closeQuotaDropdowns() {
+      quotaEnterpriseDropdown.classList.remove("is-open");
+      quotaEnterpriseSelect.classList.remove("is-open");
+      quotaGroupDropdown.classList.remove("is-open");
+      quotaGroupSelect.classList.remove("is-open");
+    }
+
+    function resetQuotaForm() {
+      quotaEnterpriseText.textContent = "请选择企业";
+      quotaGroupText.textContent = "请选择资源组";
+      quotaEnterpriseSelect.classList.remove("has-value");
+      quotaGroupSelect.classList.remove("has-value");
+      quotaEnterpriseDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+      quotaGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+      quotaConcurrencyInput.value = "";
+    }
+
+    quotaEnterpriseSelect.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeQuotaDropdowns();
+      quotaEnterpriseDropdown.classList.toggle("is-open");
+      quotaEnterpriseSelect.classList.toggle("is-open");
+    });
+
+    quotaEnterpriseSelect.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        quotaEnterpriseSelect.click();
+      }
+    });
+
+    quotaGroupSelect.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeQuotaDropdowns();
+      quotaGroupDropdown.classList.toggle("is-open");
+      quotaGroupSelect.classList.toggle("is-open");
+    });
+
+    quotaGroupSelect.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        quotaGroupSelect.click();
+      }
+    });
+
+    quotaEnterpriseDropdown.querySelectorAll(".apikey-dropdown-item").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        quotaEnterpriseText.textContent = item.dataset.value;
+        quotaEnterpriseSelect.classList.add("has-value");
+        quotaEnterpriseDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+        item.classList.add("is-selected");
+        quotaEnterpriseDropdown.classList.remove("is-open");
+        quotaEnterpriseSelect.classList.remove("is-open");
+      });
+    });
+
+    quotaGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((item) => {
+      item.addEventListener("click", (e) => {
+        e.stopPropagation();
+        quotaGroupText.textContent = item.dataset.value;
+        quotaGroupSelect.classList.add("has-value");
+        quotaGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+        item.classList.add("is-selected");
+        quotaGroupDropdown.classList.remove("is-open");
+        quotaGroupSelect.classList.remove("is-open");
+      });
+    });
+
+    function editQuotaHandler() {
+      editingQuota = true;
+      activeQuotaRow = this.closest("tr");
+      quotaTitle.textContent = "编辑配额";
+      resetQuotaForm();
+      const cells = activeQuotaRow.querySelectorAll("td");
+      quotaEnterpriseText.textContent = cells[0].textContent.trim();
+      quotaEnterpriseSelect.classList.add("has-value");
+      quotaGroupText.textContent = cells[1].textContent.trim();
+      quotaGroupSelect.classList.add("has-value");
+      quotaConcurrencyInput.value = activeQuotaRow.querySelector(".quota-value").textContent;
+      openLayer(quotaEditModal);
+    }
+
+    function deleteQuotaHandler() {
+      activeDeleteRow = this.closest("tr");
+      activeSandboxToggle = undefined;
+      confirmActionTitle.textContent = "确认删除!";
+      deleteMessage.innerHTML = `确认删除“${activeDeleteRow.querySelector("td").textContent.trim()} / ${activeDeleteRow.querySelectorAll("td")[1].textContent.trim()}”的配额，<br>确定删除后，所选内容将无法恢复，请谨慎操作。`;
+      openLayer(deleteModal);
+    }
+
+    document.querySelector("#createQuotaBtn").addEventListener("click", () => {
+      editingQuota = false;
+      quotaTitle.textContent = "新增配额";
+      resetQuotaForm();
+      openLayer(quotaEditModal);
+    });
 
     document.querySelectorAll(".js-edit-quota").forEach((button) => {
-      button.addEventListener("click", () => {
-        activeQuotaRow = button.closest("tr");
-        quotaGroupInput.value = button.dataset.group;
-        quotaConcurrencyInput.value = button.dataset.concurrency;
-        openLayer(quotaEditModal);
-      });
+      button.addEventListener("click", editQuotaHandler);
+    });
+
+    document.querySelectorAll(".js-delete-quota").forEach((button) => {
+      button.addEventListener("click", deleteQuotaHandler);
     });
 
     document.querySelectorAll(".js-close-quota").forEach((button) => {
       button.addEventListener("click", () => closeLayer(quotaEditModal));
     });
 
+    document.addEventListener("click", closeQuotaDropdowns);
+
     document.querySelector("#saveQuotaBtn").addEventListener("click", () => {
+      const enterprise = quotaEnterpriseText.textContent === "请选择企业" ? "" : quotaEnterpriseText.textContent;
+      const group = quotaGroupText.textContent === "请选择资源组" ? "" : quotaGroupText.textContent;
+      if (!enterprise) {
+        quotaEnterpriseSelect.focus();
+        return;
+      }
+      if (!group) {
+        quotaGroupSelect.focus();
+        return;
+      }
       if (!quotaConcurrencyInput.value || Number(quotaConcurrencyInput.value) < 1) {
         quotaConcurrencyInput.focus();
         return;
       }
-      if (activeQuotaRow) {
+      if (editingQuota && activeQuotaRow) {
+        activeQuotaRow.querySelector("td").textContent = enterprise;
+        activeQuotaRow.querySelectorAll("td")[1].textContent = group;
         activeQuotaRow.querySelectorAll(".quota-value")[0].textContent = quotaConcurrencyInput.value;
+      } else {
+        const tr = document.createElement("tr");
+        tr.innerHTML =
+          `<td>${enterprise}</td><td>${group}</td>` +
+          `<td><span class="quota-value">${quotaConcurrencyInput.value}</span><span class="quota-unit">个</span></td>` +
+          `<td><a class="action-link js-edit-quota" data-enterprise="${enterprise}" data-group="${group}" data-concurrency="${quotaConcurrencyInput.value}">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>`;
+        quotaTableBody.appendChild(tr);
+        tr.querySelector(".js-edit-quota").addEventListener("click", editQuotaHandler);
+        tr.querySelector(".js-delete-quota").addEventListener("click", deleteQuotaHandler);
+        const pageTotal = document.querySelector(".quota-panel .page-total strong");
+        if (pageTotal) pageTotal.textContent = quotaTableBody.querySelectorAll("tr").length;
       }
       closeLayer(quotaEditModal);
-      showToast("配额已更新!");
+      showToast("配额已保存!");
     });
 
     const deleteMessage = deleteModal.querySelector(".confirm-text");
