@@ -758,7 +758,7 @@
 
     @container (max-width: 560px) {
       [data-view="e2b"] .toolbar-filters { justify-content: flex-start; }
-      [data-view="e2b"] .filter-field, [data-view="e2b"] .cluster-filter-input { max-width: 100%; }
+      [data-view="e2b"] .filter-field, [data-view="e2b"] .cluster-detail-node-search { max-width: 100%; }
       .cluster-table, .cluster-table tbody { display: block; }
       .cluster-table thead { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
       .cluster-table tbody tr:not([hidden]) { display: block; padding: 8px 12px; border-bottom: 1px solid #dfe5eb; }
@@ -843,27 +843,9 @@
       outline: none;
     }
 
-    .cluster-filter-select:focus,
-    .cluster-filter-input:focus {
+    .cluster-filter-select:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 2px rgba(15, 115, 246, 0.12);
-    }
-
-    .cluster-filter-input {
-      width: 190px;
-      height: 32px;
-      border: 1px solid #d9dee6;
-      border-radius: 4px;
-      padding: 0 10px;
-      color: #202020;
-      font: inherit;
-      font-size: 12px;
-      background: #ffffff;
-      outline: none;
-    }
-
-    .cluster-query-btn {
-      min-width: 56px;
     }
 
     .cluster-name-link {
@@ -1282,7 +1264,7 @@
     .cluster-detail-node-search {
       display: flex;
       width: min(300px, 100%);
-      height: 38px;
+      height: 32px;
       border: 1px solid #ccc;
       border-radius: 2px;
       background: #fff;
@@ -1302,13 +1284,13 @@
     .cluster-detail-node-search button {
       display: grid;
       place-items: center;
-      width: 38px;
+      width: 32px;
       border: 0;
       background: transparent;
       color: #666;
       cursor: pointer;
     }
-    .cluster-detail-node-search .icon { width: 26px; height: 26px; }
+    .cluster-detail-node-search .icon { width: 20px; height: 20px; }
 
     #e2bDetailNodesPanel .table-footer {
       flex-wrap: wrap;
@@ -2650,14 +2632,16 @@
               <button class="primary-btn" id="createE2bClusterBtn" type="button">＋ 添加集群</button>
             </div>
             <div class="toolbar-filters">
-              <input class="cluster-filter-input" id="e2bClusterNameFilter" type="search" placeholder="按名称查询" aria-label="按名称查询" />
+              <form class="cluster-detail-node-search cluster-list-search" id="e2bClusterSearch" role="search">
+                <input id="e2bClusterNameFilter" type="search" placeholder="集群名称" aria-label="按集群名称查询" />
+                <button type="submit" title="查询" aria-label="查询集群"><svg class="icon" aria-hidden="true"><use href="#icon-search"></use></svg></button>
+              </form>
               <select class="cluster-filter-select" id="e2bClusterZoneFilter" aria-label="按可用区筛选">
                 <option value="">可用区：全部</option>
                 <option value="bjwdt">bjwdt</option>
                 <option value="biwdt">biwdt</option>
                 <option value="tjcorp">tjcorp</option>
               </select>
-              <button class="primary-btn cluster-query-btn" id="queryE2bClusterBtn" type="button">查询</button>
               <button class="refresh-btn" id="resetE2bClusterBtn" type="button" title="重置筛选">
                 <svg class="icon small"><use href="#icon-refresh"></use></svg>
               </button>
@@ -4382,10 +4366,11 @@
       showToast("集群已添加!");
     });
 
-    document.querySelector("#queryE2bClusterBtn").addEventListener("click", applyE2bClusterFilters);
-    document.querySelector("#e2bClusterNameFilter").addEventListener("keydown", (event) => {
-      if (event.key === "Enter") applyE2bClusterFilters();
+    document.querySelector("#e2bClusterSearch").addEventListener("submit", (event) => {
+      event.preventDefault();
+      applyE2bClusterFilters();
     });
+    document.querySelector("#e2bClusterNameFilter").addEventListener("input", applyE2bClusterFilters);
     document.querySelector("#e2bClusterZoneFilter").addEventListener("change", applyE2bClusterFilters);
     document.querySelector("#resetE2bClusterBtn").addEventListener("click", () => {
       e2bClusterNameFilter.value = "";
