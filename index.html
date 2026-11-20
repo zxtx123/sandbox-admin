@@ -747,6 +747,94 @@
 
     [data-view="e2b"] .toolbar-filters { flex: 1 1 440px; }
 
+    .sandbox-list-view .table-panel { container-type: inline-size; }
+    .sandbox-list-view .table-toolbar {
+      height: auto;
+      min-height: 60px;
+      padding-block: 12px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+    }
+    .sandbox-list-view .toolbar-filters {
+      flex: 0 0 auto;
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+      min-width: max-content;
+    }
+    .sandbox-list-view .toolbar-actions {
+      flex: 0 0 auto;
+    }
+    .sandbox-list-view .filter-label {
+      padding-inline: 7px;
+    }
+    .sandbox-list-view .filter-field.select {
+      width: 92px;
+      padding-inline: 8px;
+    }
+    .sandbox-list-view .filter-field.search {
+      width: 180px;
+      flex: 0 0 180px;
+    }
+    .sandbox-list-view .sandbox-filter-select {
+      color: #202020;
+      cursor: pointer;
+    }
+    .sandbox-list-table {
+      table-layout: fixed;
+    }
+    .sandbox-list-table :is(th, td) {
+      padding-right: 10px;
+      padding-left: 10px;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .sandbox-list-table .action-link {
+      display: inline-block;
+      margin-right: 4px;
+      white-space: nowrap;
+    }
+    .sandbox-list-view .table-wrap { overflow-x: hidden; }
+
+    @container (max-width: 980px) {
+      .sandbox-list-view .toolbar-filters { justify-content: flex-start; }
+      .sandbox-list-view .filter-field.search { flex: 0 0 180px; max-width: none; }
+      .sandbox-list-table,
+      .sandbox-list-table tbody { display: block; }
+      .sandbox-list-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+      }
+      .sandbox-list-table tbody tr.sandbox-data-row:not([hidden]) {
+        display: block;
+        padding: 8px 12px;
+        border-bottom: 1px solid #dfe5eb;
+      }
+      .sandbox-list-table tbody tr.sandbox-empty-row { display: none; }
+      .sandbox-list-table tbody td {
+        display: block;
+        position: relative;
+        height: auto;
+        min-height: 26px;
+        padding: 4px 0 4px 108px;
+        border: 0;
+        text-align: left;
+        overflow: visible;
+      }
+      .sandbox-list-table tbody td::before {
+        position: absolute;
+        left: 0;
+        color: #666;
+        content: attr(data-label);
+      }
+      .sandbox-list-table tbody td:first-child {
+        padding-left: 108px;
+        text-align: left;
+      }
+    }
+
     .data-table.cluster-table :is(th, td) {
       padding: 6px clamp(4px, 0.6cqi, 12px);
       white-space: normal;
@@ -2847,7 +2935,7 @@
           </div>
         </div>
       </section>
-      <section class="list-view view" data-view="list" aria-label="沙箱实例">
+      <section class="list-view view sandbox-list-view" data-view="list" aria-label="沙箱实例">
         <div class="table-panel">
           <div class="table-toolbar">
             <div class="toolbar-actions">
@@ -2869,8 +2957,22 @@
                   <svg class="chevron"><use href="#icon-chevron"></use></svg>
                 </button>
               </div>
-              <div class="filter-field search" style="padding: 0;">
-                <input type="text" placeholder="沙箱ID/模版名称" style="border: none; outline: none; background: transparent; width: 100%; height: 100%; padding-left: 10px; font-size: inherit; color: #202020;" />
+              <div class="filter-combo">
+                <span class="filter-label">集群</span>
+                <select class="filter-field select sandbox-filter-select" id="sandboxClusterFilter" aria-label="按集群筛选">
+                  <option value="">全部</option>
+                </select>
+              </div>
+              <div class="filter-combo">
+                <span class="filter-label">状态</span>
+                <select class="filter-field select sandbox-filter-select" id="sandboxStatusFilter" aria-label="按状态筛选">
+                  <option value="">全部</option>
+                  <option value="running">运行中</option>
+                  <option value="paused">已暂停</option>
+                </select>
+              </div>
+              <div class="filter-field search sandbox-list-search" style="padding: 0;">
+                <input id="sandboxSearchFilter" type="text" placeholder="沙箱ID/模版名称" style="border: none; outline: none; background: transparent; width: 100%; height: 100%; padding-left: 10px; font-size: inherit; color: #202020;" />
                 <svg class="icon small" style="margin-right: 10px; flex-shrink: 0; color: #8e96a3;"><use href="#icon-search"></use></svg>
               </div>
               <button class="refresh-btn" type="button" title="刷新">
@@ -2879,24 +2981,26 @@
             </div>
           </div>
           <div class="table-wrap">
-            <table class="data-table">
+            <table class="data-table sandbox-list-table">
               <colgroup>
                 <col style="width: 3%" />
-                <col style="width: 13%" />
+                <col style="width: 12%" />
                 <col style="width: 14%" />
+                <col style="width: 10%" />
                 <col style="width: 8%" />
                 <col style="width: 8%" />
                 <col style="width: 6%" />
                 <col style="width: 10%" />
                 <col style="width: 12%" />
                 <col style="width: 7%" />
-                <col style="width: 12%" />
+                <col style="width: 10%" />
               </colgroup>
               <thead>
                 <tr>
                   <th><input class="select-all" type="checkbox" aria-label="全选沙箱" /></th>
                   <th>沙箱ID</th>
                   <th>模版名称</th>
+                  <th>集群</th>
                   <th>资源组</th>
                   <th>状态</th>
                   <th>CPU</th>
@@ -2907,38 +3011,38 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230801-001" /></td><td>sbx-20230801-001</td><td>Java开发标准环境</td><td>研发部</td><td><span class="sandbox-status running">运行中</span></td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="general-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230801-001" /></td><td>sbx-20230801-001</td><td>Java开发标准环境</td><td class="sandbox-cluster-cell"></td><td>研发部</td><td><span class="sandbox-status running">运行中</span></td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-01 10:00:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230801-002" /></td><td>sbx-20230801-002</td><td>Python数据分析环境</td><td>数据组</td><td><span class="sandbox-status paused">已暂停</span></td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="nano-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230801-002" /></td><td>sbx-20230801-002</td><td>Python数据分析环境</td><td class="sandbox-cluster-cell"></td><td>数据组</td><td><span class="sandbox-status paused">已暂停</span></td><td>8核</td><td>16G</td><td>{"env":"test"}</td><td>2023-08-01 11:30:00</td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230802-001" /></td><td>sbx-20230802-001</td><td>NodeJS前端环境</td><td>前端组</td><td><span class="sandbox-status running">运行中</span></td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="general-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230802-001" /></td><td>sbx-20230802-001</td><td>NodeJS前端环境</td><td class="sandbox-cluster-cell"></td><td>前端组</td><td><span class="sandbox-status running">运行中</span></td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-02 09:15:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230802-002" /></td><td>sbx-20230802-002</td><td>Go微服务测试环境</td><td>测试组</td><td><span class="sandbox-status running">运行中</span></td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="corp-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230802-002" /></td><td>sbx-20230802-002</td><td>Go微服务测试环境</td><td class="sandbox-cluster-cell"></td><td>测试组</td><td><span class="sandbox-status running">运行中</span></td><td>4核</td><td>8G</td><td>{"env":"qa"}</td><td>2023-08-02 14:20:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230803-001" /></td><td>sbx-20230803-001</td><td>C++算法训练环境</td><td>算法组</td><td><span class="sandbox-status paused">已暂停</span></td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="nano-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230803-001" /></td><td>sbx-20230803-001</td><td>C++算法训练环境</td><td class="sandbox-cluster-cell"></td><td>算法组</td><td><span class="sandbox-status paused">已暂停</span></td><td>16核</td><td>32G</td><td>{"gpu":"true"}</td><td>2023-08-03 16:45:00</td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230804-001" /></td><td>sbx-20230804-001</td><td>Java开发标准环境</td><td>研发部</td><td><span class="sandbox-status running">运行中</span></td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="general-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230804-001" /></td><td>sbx-20230804-001</td><td>Java开发标准环境</td><td class="sandbox-cluster-cell"></td><td>研发部</td><td><span class="sandbox-status running">运行中</span></td><td>4核</td><td>8G</td><td>{"env":"dev"}</td><td>2023-08-04 10:10:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230804-002" /></td><td>sbx-20230804-002</td><td>Python数据分析环境</td><td>数据组</td><td><span class="sandbox-status paused">已暂停</span></td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="corp-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230804-002" /></td><td>sbx-20230804-002</td><td>Python数据分析环境</td><td class="sandbox-cluster-cell"></td><td>数据组</td><td><span class="sandbox-status paused">已暂停</span></td><td>8核</td><td>16G</td><td>{"env":"prod"}</td><td>2023-08-04 11:05:00</td><td><a class="action-link js-toggle-sandbox">恢复</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr>
-                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230805-001" /></td><td>sbx-20230805-001</td><td>NodeJS前端环境</td><td>前端组</td><td><span class="sandbox-status running">运行中</span></td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
+                <tr class="sandbox-data-row" data-cluster="nano-cluster">
+                  <td><input class="row-select" type="checkbox" aria-label="选择沙箱 sbx-20230805-001" /></td><td>sbx-20230805-001</td><td>NodeJS前端环境</td><td class="sandbox-cluster-cell"></td><td>前端组</td><td><span class="sandbox-status running">运行中</span></td><td>2核</td><td>4G</td><td>{}</td><td>2023-08-05 09:30:00</td><td><a class="action-link js-toggle-sandbox">暂停</a><a class="action-link danger js-delete">删除</a></td>
                 </tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr class="sandbox-empty-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr class="sandbox-empty-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                <tr class="sandbox-empty-row"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
               </tbody>
             </table>
           </div>
           <div class="table-footer">
-            <div class="page-total">共 <strong>3</strong> 条记录　 第 <span>1</span> / 1 页</div>
+            <div class="page-total">共 <strong id="sandboxTotal">8</strong> 条记录　 第 <span>1</span> / 1 页</div>
             <div class="pagination">
               <button class="page-size" type="button">10 条/页 <svg class="chevron"><use href="#icon-chevron"></use></svg></button>
               <button class="page-btn" type="button">‹</button>
@@ -3480,34 +3584,36 @@
           <div class="table-wrap">
             <table class="data-table quota-table">
               <colgroup>
-                <col style="width: 33%" />
-                <col style="width: 30%" />
-                <col style="width: 22%" />
-                <col style="width: 15%" />
+                <col style="width: 25%" />
+                <col style="width: 23%" />
+                <col style="width: 20%" />
+                <col style="width: 20%" />
+                <col style="width: 12%" />
               </colgroup>
               <thead>
                 <tr>
                   <th>企业</th>
                   <th>资源组</th>
+                  <th>E2B集群</th>
                   <th>并发沙箱数量上限</th>
                   <th>操作</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>360集团</td><td>研发部</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="研发部" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
+                  <td>360集团</td><td>研发部</td><td>general-cluster</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="研发部" data-cluster="general-cluster" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>360集团</td><td>数据组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="数据组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
+                  <td>360集团</td><td>数据组</td><td>nano-cluster</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="数据组" data-cluster="nano-cluster" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>360集团</td><td>前端组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="前端组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
+                  <td>360集团</td><td>前端组</td><td>general-cluster</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="前端组" data-cluster="general-cluster" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>360集团</td><td>测试组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="测试组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
+                  <td>360集团</td><td>测试组</td><td>corp-cluster</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="测试组" data-cluster="corp-cluster" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
                 <tr>
-                  <td>360集团</td><td>默认资源组</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="默认资源组" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
+                  <td>360集团</td><td>默认资源组</td><td>nano-cluster</td><td><span class="quota-value">20</span><span class="quota-unit">个</span></td><td><a class="action-link js-edit-quota" data-enterprise="360集团" data-group="默认资源组" data-cluster="nano-cluster" data-concurrency="20">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>
                 </tr>
               </tbody>
             </table>
@@ -3612,6 +3718,16 @@
             <div class="apikey-dropdown-item" data-value="测试组">测试组</div>
             <div class="apikey-dropdown-item" data-value="默认资源组">默认资源组</div>
           </div>
+        </div>
+      </div>
+      <div class="quota-edit-row">
+        <label class="quota-edit-label required" for="quotaClusterSelect">E2B集群</label>
+        <div class="apikey-select-wrap">
+          <div class="apikey-select" id="quotaClusterSelect" tabindex="0" role="listbox" aria-label="选择集群">
+            <span class="apikey-select-text" id="quotaClusterText">请选择集群</span>
+            <svg class="chevron"><use href="#icon-chevron"></use></svg>
+          </div>
+          <div class="apikey-dropdown" id="quotaClusterDropdown"></div>
         </div>
       </div>
       <div class="quota-edit-row">
@@ -4223,9 +4339,83 @@
         if (matched) visibleCount += 1;
       });
       e2bClusterTotal.textContent = visibleCount;
+      if (typeof refreshSandboxClusterFilter === "function") refreshSandboxClusterFilter();
     }
 
     document.querySelectorAll("#e2bClusterTableBody tr").forEach(bindE2bClusterRow);
+
+    const sandboxListSection = document.querySelector('[data-view="list"]');
+    const sandboxTableBody = sandboxListSection.querySelector("tbody");
+    const sandboxClusterFilter = document.querySelector("#sandboxClusterFilter");
+    const sandboxStatusFilter = document.querySelector("#sandboxStatusFilter");
+    const sandboxSearchFilter = document.querySelector("#sandboxSearchFilter");
+    const sandboxTotal = document.querySelector("#sandboxTotal");
+    const sandboxRows = [...sandboxTableBody.querySelectorAll("tr.sandbox-data-row")];
+
+    function getE2bClusterRow(name) {
+      return [...e2bClusterTableBody.querySelectorAll("tr[data-name]")].find((row) => row.dataset.name === name);
+    }
+
+    function renderSandboxClusterCells() {
+      sandboxRows.forEach((row) => {
+        const clusterRow = getE2bClusterRow(row.dataset.cluster);
+        const clusterCell = row.querySelector(".sandbox-cluster-cell");
+        if (!clusterCell) return;
+        clusterCell.textContent = clusterRow?.dataset.name || "-";
+        clusterCell.title = clusterRow?.dataset.displayName || clusterCell.textContent;
+      });
+    }
+
+    function refreshSandboxClusterFilter() {
+      const selectedValue = sandboxClusterFilter.value;
+      const clusters = [...e2bClusterTableBody.querySelectorAll("tr[data-name]")]
+        .map((row) => row.dataset.name)
+        .filter(Boolean);
+      sandboxClusterFilter.replaceChildren(new Option("全部", ""));
+      [...new Set(clusters)].forEach((clusterName) => {
+        sandboxClusterFilter.add(new Option(clusterName, clusterName));
+      });
+      sandboxClusterFilter.value = clusters.includes(selectedValue) ? selectedValue : "";
+    }
+
+    function setSandboxCellLabels() {
+      const labels = [...sandboxListSection.querySelectorAll("thead th")].map((header, index) => header.textContent.trim() || (index === 0 ? "选择" : "字段"));
+      sandboxRows.forEach((row) => {
+        [...row.cells].forEach((cell, index) => {
+          cell.dataset.label = labels[index] || "字段";
+        });
+      });
+    }
+
+    function applySandboxFilters() {
+      renderSandboxClusterCells();
+      refreshSandboxClusterFilter();
+      const query = sandboxSearchFilter.value.trim().toLowerCase();
+      const cluster = sandboxClusterFilter.value;
+      const status = sandboxStatusFilter.value;
+      let visibleCount = 0;
+
+      sandboxRows.forEach((row) => {
+        const rowStatus = row.querySelector(".sandbox-status");
+        const statusValue = rowStatus?.classList.contains("paused") ? "paused" : "running";
+        row.dataset.status = statusValue;
+        const searchableText = `${row.cells[1]?.textContent || ""} ${row.cells[2]?.textContent || ""}`.toLowerCase();
+        const matched = (!query || searchableText.includes(query)) && (!cluster || row.dataset.cluster === cluster) && (!status || statusValue === status);
+        row.hidden = !matched;
+        if (matched) visibleCount += 1;
+      });
+      sandboxTableBody.querySelectorAll("tr.sandbox-empty-row").forEach((row) => {
+        row.hidden = true;
+      });
+      sandboxTotal.textContent = visibleCount;
+    }
+
+    setSandboxCellLabels();
+    refreshSandboxClusterFilter();
+    applySandboxFilters();
+    sandboxSearchFilter.addEventListener("input", applySandboxFilters);
+    sandboxClusterFilter.addEventListener("change", applySandboxFilters);
+    sandboxStatusFilter.addEventListener("change", applySandboxFilters);
 
     e2bDetailTabs.forEach((tab) => {
       tab.addEventListener("click", () => setE2bDetailTab(tab.dataset.detailTab));
@@ -4496,6 +4686,9 @@
     const quotaGroupSelect = document.querySelector("#quotaGroupSelect");
     const quotaGroupText = document.querySelector("#quotaGroupText");
     const quotaGroupDropdown = document.querySelector("#quotaGroupDropdown");
+    const quotaClusterSelect = document.querySelector("#quotaClusterSelect");
+    const quotaClusterText = document.querySelector("#quotaClusterText");
+    const quotaClusterDropdown = document.querySelector("#quotaClusterDropdown");
     const quotaConcurrencyInput = document.querySelector("#quotaConcurrency");
     const quotaTableBody = document.querySelector(".quota-table tbody");
 
@@ -4507,15 +4700,20 @@
       quotaEnterpriseSelect.classList.remove("is-open");
       quotaGroupDropdown.classList.remove("is-open");
       quotaGroupSelect.classList.remove("is-open");
+      quotaClusterDropdown.classList.remove("is-open");
+      quotaClusterSelect.classList.remove("is-open");
     }
 
     function resetQuotaForm() {
       quotaEnterpriseText.textContent = "请选择企业";
       quotaGroupText.textContent = "请选择资源组";
+      quotaClusterText.textContent = "请选择集群";
       quotaEnterpriseSelect.classList.remove("has-value");
       quotaGroupSelect.classList.remove("has-value");
+      quotaClusterSelect.classList.remove("has-value");
       quotaEnterpriseDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
       quotaGroupDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+      quotaClusterDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
       quotaConcurrencyInput.value = "";
     }
 
@@ -4547,6 +4745,20 @@
       }
     });
 
+    quotaClusterSelect.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeQuotaDropdowns();
+      quotaClusterDropdown.classList.toggle("is-open");
+      quotaClusterSelect.classList.toggle("is-open");
+    });
+
+    quotaClusterSelect.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        quotaClusterSelect.click();
+      }
+    });
+
     quotaEnterpriseDropdown.querySelectorAll(".apikey-dropdown-item").forEach((item) => {
       item.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -4571,6 +4783,35 @@
       });
     });
 
+    function selectQuotaCluster(item) {
+      quotaClusterText.textContent = item.dataset.value;
+      quotaClusterSelect.classList.add("has-value");
+      quotaClusterDropdown.querySelectorAll(".apikey-dropdown-item").forEach((i) => i.classList.remove("is-selected"));
+      item.classList.add("is-selected");
+      quotaClusterDropdown.classList.remove("is-open");
+      quotaClusterSelect.classList.remove("is-open");
+    }
+
+    function refreshQuotaClusterOptions() {
+      const selectedValue = quotaClusterText.textContent === "请选择集群" ? "" : quotaClusterText.textContent;
+      const clusters = [...e2bClusterTableBody.querySelectorAll("tr[data-name]")]
+        .map((row) => row.dataset.name)
+        .filter(Boolean);
+      quotaClusterDropdown.replaceChildren();
+      [...new Set(clusters)].forEach((clusterName) => {
+        const item = document.createElement("div");
+        item.className = "apikey-dropdown-item";
+        item.dataset.value = clusterName;
+        item.textContent = clusterName;
+        item.addEventListener("click", (e) => {
+          e.stopPropagation();
+          selectQuotaCluster(item);
+        });
+        quotaClusterDropdown.appendChild(item);
+        if (clusterName === selectedValue) item.classList.add("is-selected");
+      });
+    }
+
     function editQuotaHandler() {
       editingQuota = true;
       activeQuotaRow = this.closest("tr");
@@ -4581,6 +4822,10 @@
       quotaEnterpriseSelect.classList.add("has-value");
       quotaGroupText.textContent = cells[1].textContent.trim();
       quotaGroupSelect.classList.add("has-value");
+      refreshQuotaClusterOptions();
+      quotaClusterText.textContent = cells[2].textContent.trim();
+      quotaClusterSelect.classList.add("has-value");
+      quotaClusterDropdown.querySelectorAll(".apikey-dropdown-item").forEach((item) => item.classList.toggle("is-selected", item.dataset.value === quotaClusterText.textContent));
       quotaConcurrencyInput.value = activeQuotaRow.querySelector(".quota-value").textContent;
       openLayer(quotaEditModal);
     }
@@ -4589,13 +4834,15 @@
       activeDeleteRow = this.closest("tr");
       activeSandboxToggle = undefined;
       confirmActionTitle.textContent = "确认删除!";
-      deleteMessage.innerHTML = `确认删除“${activeDeleteRow.querySelector("td").textContent.trim()} / ${activeDeleteRow.querySelectorAll("td")[1].textContent.trim()}”的配额，<br>确定删除后，所选内容将无法恢复，请谨慎操作。`;
+      const cells = activeDeleteRow.querySelectorAll("td");
+      deleteMessage.innerHTML = `确认删除“${cells[0].textContent.trim()} / ${cells[1].textContent.trim()} / ${cells[2].textContent.trim()}”的配额，<br>确定删除后，所选内容将无法恢复，请谨慎操作。`;
       openLayer(deleteModal);
     }
 
     document.querySelector("#createQuotaBtn").addEventListener("click", () => {
       editingQuota = false;
       quotaTitle.textContent = "新增配额";
+      refreshQuotaClusterOptions();
       resetQuotaForm();
       openLayer(quotaEditModal);
     });
@@ -4617,12 +4864,17 @@
     document.querySelector("#saveQuotaBtn").addEventListener("click", () => {
       const enterprise = quotaEnterpriseText.textContent === "请选择企业" ? "" : quotaEnterpriseText.textContent;
       const group = quotaGroupText.textContent === "请选择资源组" ? "" : quotaGroupText.textContent;
+      const cluster = quotaClusterText.textContent === "请选择集群" ? "" : quotaClusterText.textContent;
       if (!enterprise) {
         quotaEnterpriseSelect.focus();
         return;
       }
       if (!group) {
         quotaGroupSelect.focus();
+        return;
+      }
+      if (!cluster) {
+        quotaClusterSelect.focus();
         return;
       }
       if (!quotaConcurrencyInput.value || Number(quotaConcurrencyInput.value) < 1) {
@@ -4632,13 +4884,14 @@
       if (editingQuota && activeQuotaRow) {
         activeQuotaRow.querySelector("td").textContent = enterprise;
         activeQuotaRow.querySelectorAll("td")[1].textContent = group;
+        activeQuotaRow.querySelectorAll("td")[2].textContent = cluster;
         activeQuotaRow.querySelectorAll(".quota-value")[0].textContent = quotaConcurrencyInput.value;
       } else {
         const tr = document.createElement("tr");
         tr.innerHTML =
-          `<td>${enterprise}</td><td>${group}</td>` +
+          `<td>${enterprise}</td><td>${group}</td><td>${cluster}</td>` +
           `<td><span class="quota-value">${quotaConcurrencyInput.value}</span><span class="quota-unit">个</span></td>` +
-          `<td><a class="action-link js-edit-quota" data-enterprise="${enterprise}" data-group="${group}" data-concurrency="${quotaConcurrencyInput.value}">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>`;
+          `<td><a class="action-link js-edit-quota" data-enterprise="${enterprise}" data-group="${group}" data-cluster="${cluster}" data-concurrency="${quotaConcurrencyInput.value}">编辑</a><a class="action-link danger js-delete-quota">删除</a></td>`;
         quotaTableBody.appendChild(tr);
         tr.querySelector(".js-edit-quota").addEventListener("click", editQuotaHandler);
         tr.querySelector(".js-delete-quota").addEventListener("click", deleteQuotaHandler);
@@ -4760,6 +5013,7 @@
         activeSandboxToggle.textContent = isPausing ? "恢复" : "暂停";
         activeSandboxToggle = undefined;
         closeLayer(deleteModal);
+        applySandboxFilters();
         showToast(isPausing ? "沙箱已暂停!" : "沙箱已恢复!");
         deleteSuccessText = "删除成功!";
         return;
@@ -4770,6 +5024,7 @@
       activeDeleteRow = undefined;
       closeLayer(deleteModal);
       if (deletedE2bCluster) applyE2bClusterFilters();
+      applySandboxFilters();
       showToast(deleteSuccessText);
       deleteSuccessText = "删除成功!";
     });
