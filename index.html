@@ -910,10 +910,6 @@
       color: #18a058;
     }
 
-    .cluster-status.creating {
-      color: #d99000;
-    }
-
     .cluster-status.error {
       color: #e5484d;
     }
@@ -1023,6 +1019,52 @@
       display: none;
     }
 
+    .cluster-create-section {
+      padding: 20px 24px 24px;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .cluster-create-section h3 {
+      margin: 0 0 16px;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .cluster-create-fields {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+      gap: 16px 24px;
+      max-width: 800px;
+    }
+
+    .cluster-create-field {
+      display: grid;
+      grid-template-columns: 112px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .cluster-create-field .quota-edit-label { text-align: right; }
+    .cluster-create-field :is(input, select) { height: 32px; border-radius: 4px; }
+    .cluster-create-field-error {
+      grid-column: 2;
+      color: #e5484d;
+      font-size: 12px;
+      line-height: 18px;
+    }
+    .cluster-create-field .quota-edit-input.is-invalid {
+      border-color: #e5484d;
+    }
+
+    .cluster-create-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 16px 24px;
+    }
+
     .cluster-detail-tabs {
       display: flex;
       align-items: center;
@@ -1112,7 +1154,7 @@
 
     .cluster-resource-card {
       min-width: 0;
-      min-height: 248px;
+      min-height: 224px;
       border-radius: 8px;
       padding: 18px 20px;
       background: #f7f9fb;
@@ -1129,10 +1171,10 @@
     }
 
     .cluster-resource-card-title {
-      width: 154px;
+      width: 146px;
       margin: 0 0 14px;
       color: #1d2938;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       text-align: center;
     }
@@ -1152,7 +1194,7 @@
       width: 138px;
       height: 138px;
       border-radius: 50%;
-      background: conic-gradient(from -90deg, #1689f5 0 var(--resource-used-percent), #43b7d7 var(--resource-used-percent) 100%);
+      background: #1689f5;
     }
 
     .resource-donut::after {
@@ -1189,7 +1231,7 @@
     .resource-legend {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 0;
       min-width: 0;
       color: #637185;
       font-size: 12px;
@@ -1307,7 +1349,7 @@
 
       .cluster-resource-card-title {
         width: 124px;
-        font-size: 16px;
+        font-size: 15px;
       }
 
       .cluster-resource-chart {
@@ -1524,6 +1566,11 @@
 
     .action-link.danger {
       color: #ff3333;
+    }
+
+    .action-link.is-disabled {
+      color: #a6afbc;
+      cursor: not-allowed;
     }
 
     .data-table th:first-child,
@@ -2624,6 +2671,11 @@
         <div class="crumb" data-crumb="e2b">
           <span class="crumb-current">E2B集群</span>
         </div>
+        <div class="crumb" data-crumb="e2b-create">
+          <span class="crumb-muted">E2B集群</span>
+          <span aria-hidden="true">/</span>
+          <span class="crumb-current" id="e2bCreateCrumbTitle">添加集群</span>
+        </div>
         <div class="crumb" data-crumb="e2b-detail">
           <span class="crumb-current">E2B集群详情</span>
         </div>
@@ -2745,50 +2797,54 @@
                 <th>状态</th>
                 <th>可用区</th>
                 <th>网络ID/名称</th>
+                <th>集群类型</th>
                 <th>版本</th>
                 <th>Ready数/节点数</th>
-                <th>已使用/总资源</th>
+                <th>总资源</th>
                 <th>创建时间</th>
                 <th>操作</th>
               </tr>
             </thead>
             <tbody id="e2bClusterTableBody">
-              <tr data-id="e2b-cluster-001" data-name="general-cluster" data-display-name="通用集群" data-zone="bjwdt" data-network-id="net-bjwdt-001" data-network-name="北京研发网络" data-version="v1.4.2" data-ready="5" data-nodes="6" data-cpu-used="32" data-cpu-total="48" data-memory-used="96" data-memory-total="128" data-created-at="2026-01-12 10:20:00">
+              <tr data-id="e2b-cluster-001" data-name="general-cluster" data-display-name="通用集群" data-cluster-type="公共集群" data-zone="bjwdt" data-network-id="net-bjwdt-001" data-network-name="北京研发网络" data-api-address="https://api.general.example.com" data-cluster-token="********" data-sandbox-team-id="team-general-001" data-sandbox-api-address="https://sandbox.general.example.com" data-sandbox-api-key="********" data-version="v1.4.2" data-ready="5" data-nodes="6" data-cpu-used="32" data-cpu-total="48" data-memory-used="96" data-memory-total="128" data-created-at="2026-01-12 10:20:00">
                 <td>e2b-cluster-001</td>
                 <td><button class="cluster-name-link js-open-e2b-detail" type="button">general-cluster</button></td>
                 <td>通用集群</td>
                 <td><span class="cluster-status running">运行中</span></td>
                 <td>bjwdt</td>
                 <td class="cluster-network"><span class="network-line">net-bjwdt-001</span><span class="network-line">北京研发网络</span></td>
+                <td>公共集群</td>
                 <td>v1.4.2</td>
                 <td class="cluster-nodes">5 / 6</td>
-                <td class="cluster-resources"><span class="resource-line">CPU：32核 / 48核</span><span class="resource-line">内存：96GiB / 128GiB</span></td>
+                <td class="cluster-resources"><span class="resource-line">CPU：48核</span><span class="resource-line">内存：128GiB</span></td>
                 <td>2026-01-12 10:20:00</td>
                 <td><a class="action-link js-edit-e2b-cluster">编辑</a><a class="action-link js-add-e2b-node">监控</a><a class="action-link danger js-delete-e2b-cluster">删除</a></td>
               </tr>
-              <tr data-id="e2b-cluster-002" data-name="nano-cluster" data-display-name="纳米集群" data-zone="biwdt" data-network-id="net-tjcorp-001" data-network-name="隔离VPC" data-version="v1.3.8" data-ready="3" data-nodes="3" data-cpu-used="12" data-cpu-total="12" data-memory-used="48" data-memory-total="48" data-created-at="2026-02-03 14:05:00">
+              <tr data-id="e2b-cluster-002" data-name="nano-cluster" data-display-name="纳米集群" data-cluster-type="专用集群" data-zone="biwdt" data-network-id="net-tjcorp-001" data-network-name="隔离VPC" data-api-address="https://api.nano.example.com" data-cluster-token="********" data-sandbox-team-id="team-nano-001" data-sandbox-api-address="https://sandbox.nano.example.com" data-sandbox-api-key="********" data-version="v1.3.8" data-ready="3" data-nodes="3" data-cpu-used="12" data-cpu-total="12" data-memory-used="48" data-memory-total="48" data-created-at="2026-02-03 14:05:00">
                 <td>e2b-cluster-002</td>
                 <td><button class="cluster-name-link js-open-e2b-detail" type="button">nano-cluster</button></td>
                 <td>纳米集群</td>
                 <td><span class="cluster-status running">运行中</span></td>
                 <td>biwdt</td>
                 <td class="cluster-network"><span class="network-line">net-tjcorp-001</span><span class="network-line">隔离VPC</span></td>
+                <td>专用集群</td>
                 <td>v1.3.8</td>
                 <td class="cluster-nodes">3 / 3</td>
-                <td class="cluster-resources"><span class="resource-line">CPU：12核 / 12核</span><span class="resource-line">内存：48GiB / 48GiB</span></td>
+                <td class="cluster-resources"><span class="resource-line">CPU：12核</span><span class="resource-line">内存：48GiB</span></td>
                 <td>2026-02-03 14:05:00</td>
                 <td><a class="action-link js-edit-e2b-cluster">编辑</a><a class="action-link js-add-e2b-node">监控</a><a class="action-link danger js-delete-e2b-cluster">删除</a></td>
               </tr>
-              <tr data-id="e2b-cluster-003" data-name="corp-cluster" data-display-name="天津corp集群" data-zone="tjcorp" data-network-id="net-tjcorp-002" data-network-name="天津corp网络" data-version="v1.4.0" data-ready="4" data-nodes="5" data-cpu-used="24" data-cpu-total="40" data-memory-used="64" data-memory-total="80" data-created-at="2026-02-18 09:40:00">
+              <tr data-id="e2b-cluster-003" data-name="corp-cluster" data-display-name="天津corp集群" data-cluster-type="专用集群" data-zone="tjcorp" data-network-id="net-tjcorp-002" data-network-name="天津corp网络" data-api-address="https://api.corp.example.com" data-cluster-token="********" data-sandbox-team-id="team-corp-001" data-sandbox-api-address="https://sandbox.corp.example.com" data-sandbox-api-key="********" data-version="v1.4.0" data-ready="4" data-nodes="5" data-cpu-used="24" data-cpu-total="40" data-memory-used="64" data-memory-total="80" data-created-at="2026-02-18 09:40:00">
                 <td>e2b-cluster-003</td>
                 <td><button class="cluster-name-link js-open-e2b-detail" type="button">corp-cluster</button></td>
                 <td>天津corp集群</td>
-                <td><span class="cluster-status creating">添加中</span></td>
+                <td><span class="cluster-status error">异常</span></td>
                 <td>tjcorp</td>
                 <td class="cluster-network"><span class="network-line">net-tjcorp-002</span><span class="network-line">天津corp网络</span></td>
+                <td>专用集群</td>
                 <td>v1.4.0</td>
                 <td class="cluster-nodes">4 / 5</td>
-                <td class="cluster-resources"><span class="resource-line">CPU：24核 / 40核</span><span class="resource-line">内存：64GiB / 80GiB</span></td>
+                <td class="cluster-resources"><span class="resource-line">CPU：40核</span><span class="resource-line">内存：80GiB</span></td>
                 <td>2026-02-18 09:40:00</td>
                 <td><a class="action-link js-edit-e2b-cluster">编辑</a><a class="action-link js-add-e2b-node">监控</a><a class="action-link danger js-delete-e2b-cluster">删除</a></td>
               </tr>
@@ -2804,6 +2860,79 @@
               <button class="page-btn" type="button">›</button>
             </div>
           </div>
+        </div>
+      </section>
+      <section class="cluster-detail-view view" data-view="e2b-create" aria-labelledby="e2bCreateTitle">
+        <div class="cluster-detail-panel">
+          <header class="cluster-detail-header">
+            <div class="cluster-detail-heading">
+              <button class="cluster-detail-back js-close-e2b-create" type="button" title="返回集群列表" aria-label="返回集群列表">
+                <svg class="icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>
+              </button>
+              <span class="cluster-detail-divider" aria-hidden="true"></span>
+              <h2 class="cluster-detail-title" id="e2bCreateTitle">添加集群</h2>
+            </div>
+          </header>
+          <form id="e2bCreateForm" autocomplete="off">
+            <section class="cluster-create-section" aria-labelledby="e2bCreateClusterHeading">
+              <h3 id="e2bCreateClusterHeading">集群信息</h3>
+              <div class="cluster-create-fields">
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateName">集群名称</label>
+                  <input class="quota-edit-input" id="e2bCreateName" name="name" type="text" placeholder="请输入集群名称" pattern="[a-z0-9](?:[a-z0-9\-]*[a-z0-9])?" title="集群名称需以小写字母或数字开头和结尾，只能包含小写字母、数字和中划线" aria-describedby="e2bCreateNameError" required />
+                  <span class="cluster-create-field-error" id="e2bCreateNameError" role="alert" hidden>集群名称需以小写字母或数字开头和结尾，只能包含小写字母、数字和中划线</span>
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateDisplayName">集群显示名</label>
+                  <input class="quota-edit-input" id="e2bCreateDisplayName" name="displayName" type="text" placeholder="请输入集群显示名" pattern=".*\S.*" required />
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateType">集群类型</label>
+                  <select class="quota-edit-select" id="e2bCreateType" name="clusterType" required>
+                    <option value="public" selected>公共集群</option>
+                    <option value="dedicated">专用集群</option>
+                  </select>
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateZone">可用区</label>
+                  <select class="quota-edit-select" id="e2bCreateZone" name="zone" required>
+                    <option value="bjwdt">bjwdt</option>
+                    <option value="biwdt">biwdt</option>
+                    <option value="tjcorp">tjcorp</option>
+                  </select>
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateApiAddress">集群API地址</label>
+                  <input class="quota-edit-input" id="e2bCreateApiAddress" name="apiAddress" type="url" placeholder="请输入集群API地址" required />
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateToken">集群token</label>
+                  <input class="quota-edit-input" id="e2bCreateToken" name="clusterToken" type="password" placeholder="请输入集群token" pattern=".*\S.*" required />
+                </div>
+              </div>
+            </section>
+            <section class="cluster-create-section" aria-labelledby="e2bCreateSandboxHeading">
+              <h3 id="e2bCreateSandboxHeading">沙箱信息</h3>
+              <div class="cluster-create-fields">
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label" for="e2bCreateSandboxTeamId">沙箱Team ID</label>
+                  <input class="quota-edit-input" id="e2bCreateSandboxTeamId" name="sandboxTeamId" type="text" placeholder="请输入沙箱Team ID" />
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label" for="e2bCreateSandboxApiAddress">沙箱API地址</label>
+                  <input class="quota-edit-input" id="e2bCreateSandboxApiAddress" name="sandboxApiAddress" type="url" placeholder="请输入沙箱API地址" />
+                </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label" for="e2bCreateSandboxApiKey">沙箱API Key</label>
+                  <input class="quota-edit-input" id="e2bCreateSandboxApiKey" name="sandboxApiKey" type="password" placeholder="请输入沙箱API Key" />
+                </div>
+              </div>
+            </section>
+            <footer class="cluster-create-actions">
+              <button class="plain-btn js-close-e2b-create" type="button">取消</button>
+              <button class="confirm-btn" type="submit">保存</button>
+            </footer>
+          </form>
         </div>
       </section>
       <section class="cluster-detail-view view" data-view="e2b-detail" aria-label="E2B集群详情">
@@ -2826,52 +2955,52 @@
             <div class="cluster-info-grid">
               <div class="cluster-info-item"><div class="cluster-info-label">集群名称</div><div class="cluster-info-value" data-detail-field="name">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">集群显示名</div><div class="cluster-info-value" data-detail-field="displayName">-</div></div>
+              <div class="cluster-info-item"><div class="cluster-info-label">集群类型</div><div class="cluster-info-value" data-detail-field="clusterType">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">状态</div><div class="cluster-info-value" data-detail-field="status">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">可用区</div><div class="cluster-info-value" data-detail-field="zone">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">网络 ID</div><div class="cluster-info-value" data-detail-field="networkId">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">网络名称</div><div class="cluster-info-value" data-detail-field="networkName">-</div></div>
-              <div class="cluster-info-item"><div class="cluster-info-label">API 地址</div><div class="cluster-info-value" data-detail-field="apiAddress">-</div></div>
+              <div class="cluster-info-item"><div class="cluster-info-label">集群 API 地址</div><div class="cluster-info-value" data-detail-field="apiAddress">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">集群 token</div><div class="cluster-info-value" data-detail-field="clusterToken">-</div></div>
+              <div class="cluster-info-item"><div class="cluster-info-label">沙箱 Team ID</div><div class="cluster-info-value" data-detail-field="sandboxTeamId">-</div></div>
+              <div class="cluster-info-item"><div class="cluster-info-label">沙箱 API 地址</div><div class="cluster-info-value" data-detail-field="sandboxApiAddress">-</div></div>
+              <div class="cluster-info-item"><div class="cluster-info-label">沙箱 API Key</div><div class="cluster-info-value" data-detail-field="sandboxApiKey">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">版本</div><div class="cluster-info-value" data-detail-field="version">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">创建时间</div><div class="cluster-info-value" data-detail-field="createdAt">-</div></div>
               <div class="cluster-info-item"><div class="cluster-info-label">节点数</div><div class="cluster-info-value" data-detail-field="nodes">-</div></div>
-              <div class="cluster-info-item"><div class="cluster-info-label">资源使用</div><div class="cluster-info-value" data-detail-field="resources">-</div></div>
+              <div class="cluster-info-item"><div class="cluster-info-label">总资源</div><div class="cluster-info-value" data-detail-field="resources">-</div></div>
             </div>
-            <div class="cluster-resource-overview" aria-label="资源使用概览">
+            <div class="cluster-resource-overview" aria-label="总资源概览">
               <article class="cluster-resource-card cluster-resource-chart-card">
                 <div class="cluster-resource-main">
-                  <h3 class="cluster-resource-card-title">CPU使用量(C)</h3>
+                  <h3 class="cluster-resource-card-title">CPU总量(C)</h3>
                   <div class="cluster-resource-chart">
-                  <div class="resource-donut" data-resource-donut="cpu" style="--resource-used-percent: 0%;">
+                  <div class="resource-donut is-total" data-resource-donut="cpu">
                     <div class="resource-donut-center">
-                      <span>已使用</span>
-                      <strong data-resource-value="cpu-used">0.00</strong>
-                      <span class="resource-donut-total">总容量 <span data-resource-value="cpu-total">0.00</span></span>
+                      <span>总量</span>
+                      <strong data-resource-value="cpu-total">0.00</strong>
+                      <span class="resource-donut-total">核</span>
                     </div>
                   </div>
                   <div class="resource-legend">
-                    <div class="resource-legend-item">总容量 <span data-resource-value="cpu-total">0.00</span></div>
-                    <div class="resource-legend-item">已使用 <span data-resource-value="cpu-used">0.00</span></div>
-                    <div class="resource-legend-item is-free">未使用 <span data-resource-value="cpu-free">0.00</span></div>
+                    <div class="resource-legend-item">CPU总量 <span data-resource-value="cpu-total">0.00</span>核</div>
                   </div>
                   </div>
                 </div>
               </article>
               <article class="cluster-resource-card cluster-resource-chart-card">
                 <div class="cluster-resource-main">
-                  <h3 class="cluster-resource-card-title">内存使用量(G)</h3>
+                  <h3 class="cluster-resource-card-title">内存总量(G)</h3>
                   <div class="cluster-resource-chart">
-                  <div class="resource-donut" data-resource-donut="memory" style="--resource-used-percent: 0%;">
+                  <div class="resource-donut is-total" data-resource-donut="memory">
                     <div class="resource-donut-center">
-                      <span>已使用</span>
-                      <strong data-resource-value="memory-used">0.00</strong>
-                      <span class="resource-donut-total">总容量 <span data-resource-value="memory-total">0.00</span></span>
+                      <span>总量</span>
+                      <strong data-resource-value="memory-total">0.00</strong>
+                      <span class="resource-donut-total">GiB</span>
                     </div>
                   </div>
                   <div class="resource-legend">
-                    <div class="resource-legend-item">总容量 <span data-resource-value="memory-total">0.00</span></div>
-                    <div class="resource-legend-item">已使用 <span data-resource-value="memory-used">0.00</span></div>
-                    <div class="resource-legend-item is-free">未使用 <span data-resource-value="memory-free">0.00</span></div>
+                    <div class="resource-legend-item">内存总量 <span data-resource-value="memory-total">0.00</span>GiB</div>
                   </div>
                   </div>
                 </div>
@@ -2895,7 +3024,7 @@
                   <div class="resource-status-heading">
                     <div class="resource-status-label">
                       <span class="resource-status-icon is-instance"><svg class="icon" aria-hidden="true"><use href="#icon-window"></use></svg></span>
-                      <span>实例</span>
+                      <span>沙箱实例</span>
                     </div>
                     <strong data-resource-value="instance-total">0</strong>
                   </div>
@@ -2917,7 +3046,7 @@
             </div>
             <div class="table-wrap">
               <table class="data-table cluster-detail-table cluster-detail-node-table">
-                <thead><tr><th>节点名称</th><th>节点IP</th><th>状态</th><th>可用区</th><th>规格</th><th>CPU（core）</th><th>内存（GB）</th><th>沙箱实例</th><th>操作</th></tr></thead>
+                <thead><tr><th>节点名称</th><th>节点IP</th><th>状态</th><th>可用区</th><th>规格</th><th>沙箱实例</th><th>操作</th></tr></thead>
                 <tbody id="e2bDetailNodesBody"></tbody>
               </table>
             </div>
@@ -3864,47 +3993,6 @@
     </footer>
   </section>
 
-  <section class="quota-edit-modal" id="e2bClusterModal" role="dialog" aria-modal="true" aria-labelledby="e2bClusterTitle">
-    <header class="quota-edit-header">
-      <div id="e2bClusterTitle">添加集群</div>
-      <button class="modal-close js-close-e2b-cluster" type="button" aria-label="关闭">×</button>
-    </header>
-    <div class="quota-edit-body">
-      <div class="quota-edit-row cluster-form-field">
-        <label class="quota-edit-label required" for="e2bClusterName">集群名称</label>
-        <input class="quota-edit-input" id="e2bClusterName" type="text" placeholder="请输入集群名称" pattern="[a-z](?:[a-z0-9-]*[a-z])?" title="集群名称需以小写字母开头和结尾，只能包含小写字母、数字和中划线" autocomplete="off" required />
-      </div>
-      <div class="quota-edit-row cluster-form-field">
-        <label class="quota-edit-label required" for="e2bClusterDisplayName">集群显示名</label>
-        <input class="quota-edit-input" id="e2bClusterDisplayName" type="text" placeholder="请输入集群显示名" required />
-      </div>
-      <div class="quota-edit-row cluster-form-field">
-        <label class="quota-edit-label required" for="e2bClusterZone">可用区</label>
-        <select class="quota-edit-select" id="e2bClusterZone">
-          <option value="bjwdt">bjwdt</option>
-          <option value="biwdt">biwdt</option>
-          <option value="tjcorp">tjcorp</option>
-        </select>
-      </div>
-      <div class="quota-edit-row cluster-form-field">
-        <label class="quota-edit-label required" for="e2bClusterApiAddress">API地址</label>
-        <input class="quota-edit-input" id="e2bClusterApiAddress" type="url" placeholder="请输入API地址" required />
-      </div>
-      <div class="quota-edit-row cluster-form-field">
-        <label class="quota-edit-label required" for="e2bClusterToken">集群token</label>
-        <input class="quota-edit-input" id="e2bClusterToken" type="text" placeholder="请输入集群token" autocomplete="off" required />
-      </div>
-      <div class="quota-edit-row cluster-form-field">
-        <label class="quota-edit-label" for="e2bClusterVersion">版本</label>
-        <input class="quota-edit-input" id="e2bClusterVersion" type="text" value="v1.4.2" placeholder="例如 v1.4.2" />
-      </div>
-    </div>
-    <footer class="quota-edit-footer">
-      <button class="plain-btn js-close-e2b-cluster" type="button">取消</button>
-      <button class="confirm-btn" id="saveE2bClusterBtn" type="button">保存</button>
-    </footer>
-  </section>
-
   <section class="confirm-modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
     <header class="confirm-header">
       <div id="deleteTitle">提示</div>
@@ -3958,14 +4046,27 @@
     const apiKeyModal = document.querySelector("#apiKeyModal");
     const quotaEditModal = document.querySelector("#quotaEditModal");
     const platformSettingsModal = document.querySelector("#platformSettingsModal");
-    const e2bClusterModal = document.querySelector("#e2bClusterModal");
+    const e2bCreateForm = document.querySelector("#e2bCreateForm");
+    const e2bCreateTitle = document.querySelector("#e2bCreateTitle");
+    const e2bCreateCrumbTitle = document.querySelector("#e2bCreateCrumbTitle");
+    const e2bCreateName = document.querySelector("#e2bCreateName");
+    const e2bCreateNameError = document.querySelector("#e2bCreateNameError");
+    const e2bCreateNamePattern = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    const e2bCreateDisplayName = document.querySelector("#e2bCreateDisplayName");
+    const e2bCreateType = document.querySelector("#e2bCreateType");
+    const e2bCreateZone = document.querySelector("#e2bCreateZone");
+    const e2bCreateApiAddress = document.querySelector("#e2bCreateApiAddress");
+    const e2bCreateToken = document.querySelector("#e2bCreateToken");
+    const e2bCreateSandboxTeamId = document.querySelector("#e2bCreateSandboxTeamId");
+    const e2bCreateSandboxApiAddress = document.querySelector("#e2bCreateSandboxApiAddress");
+    const e2bCreateSandboxApiKey = document.querySelector("#e2bCreateSandboxApiKey");
     const deleteModal = document.querySelector("#deleteModal");
     const successToast = document.querySelector("#successToast");
     const successToastText = document.querySelector("#successToastText");
     let toastTimer;
 
     function showContent(page) {
-      const target = page === "E2B集群" ? "e2b" : page === "E2B集群详情" || page === "e2b-detail" ? "e2b-detail" : page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : page === "配额管理" ? "quota" : page === "平台设置" ? "platform" : "plain";
+      const target = page === "E2B集群" ? "e2b" : page === "添加集群" || page === "e2b-create" ? "e2b-create" : page === "E2B集群详情" || page === "e2b-detail" ? "e2b-detail" : page === "列表" ? "list" : page === "平台概览" ? "overview" : page === "沙箱模版" ? "template" : page === "用量统计" ? "usage" : page === "运行日志" ? "log" : page === "API密钥" ? "apikey" : page === "配额管理" ? "quota" : page === "平台设置" ? "platform" : "plain";
       document.querySelectorAll(".view").forEach((view) => {
         view.classList.toggle("is-active", view.dataset.view === target);
       });
@@ -4041,7 +4142,7 @@
 
     function closeLayer(modal) {
       modal.classList.remove("is-open");
-      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open") && !quotaEditModal.classList.contains("is-open") && !platformSettingsModal.classList.contains("is-open") && !e2bClusterModal.classList.contains("is-open")) {
+      if (!billingModal.classList.contains("is-open") && !deleteModal.classList.contains("is-open") && !apiKeyModal.classList.contains("is-open") && !quotaEditModal.classList.contains("is-open") && !platformSettingsModal.classList.contains("is-open")) {
         overlay.classList.remove("is-open");
       }
     }
@@ -4063,13 +4164,6 @@
     const e2bClusterTotal = document.querySelector("#e2bClusterTotal");
     const e2bClusterNameFilter = document.querySelector("#e2bClusterNameFilter");
     const e2bClusterZoneFilter = document.querySelector("#e2bClusterZoneFilter");
-    const e2bClusterTitle = document.querySelector("#e2bClusterTitle");
-    const e2bClusterName = document.querySelector("#e2bClusterName");
-    const e2bClusterDisplayName = document.querySelector("#e2bClusterDisplayName");
-    const e2bClusterZone = document.querySelector("#e2bClusterZone");
-    const e2bClusterApiAddress = document.querySelector("#e2bClusterApiAddress");
-    const e2bClusterToken = document.querySelector("#e2bClusterToken");
-    const e2bClusterVersion = document.querySelector("#e2bClusterVersion");
     const e2bDetailTitle = document.querySelector("#e2bDetailTitle");
     const e2bDetailSubtitle = document.querySelector("#e2bDetailSubtitle");
     const e2bDetailNodesBody = document.querySelector("#e2bDetailNodesBody");
@@ -4079,11 +4173,9 @@
     let e2bNodePage = 1;
     const e2bDetailTabs = document.querySelectorAll(".cluster-detail-tab");
     const e2bDetailPanels = document.querySelectorAll("[data-detail-panel]");
-    const e2bClusterNamePattern = /^[a-z](?:[a-z0-9-]*[a-z])?$/;
-    const e2bClusterNameError = "集群名称需以小写字母开头和结尾，只能包含小写字母、数字和中划线";
     let activeE2bClusterRow;
     let activeE2bDetailRow;
-    let e2bClusterModalMode = "create";
+    let e2bCreateFormMode = "create";
 
     function formatClusterCreatedAt() {
       const now = new Date();
@@ -4094,12 +4186,10 @@
     function renderE2bClusterMetrics(row) {
       const ready = Number(row.dataset.ready) || 0;
       const nodes = Number(row.dataset.nodes) || 0;
-      const cpuUsed = Number(row.dataset.cpuUsed) || 0;
       const cpuTotal = Number(row.dataset.cpuTotal) || 0;
-      const memoryUsed = Number(row.dataset.memoryUsed) || 0;
       const memoryTotal = Number(row.dataset.memoryTotal) || 0;
       row.querySelector(".cluster-nodes").textContent = `${ready} / ${nodes}`;
-      row.querySelector(".cluster-resources").innerHTML = `<span class="resource-line">CPU：${cpuUsed}核 / ${cpuTotal}核</span><span class="resource-line">内存：${memoryUsed}GiB / ${memoryTotal}GiB</span>`;
+      row.querySelector(".cluster-resources").innerHTML = `<span class="resource-line">CPU：${cpuTotal}核</span><span class="resource-line">内存：${memoryTotal}GiB</span>`;
     }
 
     function createE2bClusterRow(data) {
@@ -4107,15 +4197,16 @@
       Object.entries(data).forEach(([key, value]) => {
         row.dataset[key] = value;
       });
-      row.innerHTML = "<td></td><td></td><td></td><td><span class=\"cluster-status\"></span></td><td></td><td class=\"cluster-network\"></td><td></td><td class=\"cluster-nodes\"></td><td class=\"cluster-resources\"></td><td></td><td><a class=\"action-link js-edit-e2b-cluster\">编辑</a><a class=\"action-link js-add-e2b-node\">监控</a><a class=\"action-link danger js-delete-e2b-cluster\">删除</a></td>";
+      row.innerHTML = "<td></td><td></td><td></td><td><span class=\"cluster-status\"></span></td><td></td><td class=\"cluster-network\"></td><td></td><td></td><td class=\"cluster-nodes\"></td><td class=\"cluster-resources\"></td><td></td><td><a class=\"action-link js-edit-e2b-cluster\">编辑</a><a class=\"action-link js-add-e2b-node\">监控</a><a class=\"action-link danger js-delete-e2b-cluster\">删除</a></td>";
       row.cells[0].textContent = row.dataset.id;
       row.cells[1].textContent = row.dataset.name;
       setE2bClusterNameCell(row);
       row.cells[2].textContent = row.dataset.displayName;
       row.cells[4].textContent = row.dataset.zone;
       row.cells[5].innerHTML = "<span class=\"network-line\">" + row.dataset.networkId + "</span><span class=\"network-line\">" + row.dataset.networkName + "</span>";
-      row.cells[6].textContent = row.dataset.version;
-      row.cells[9].textContent = row.dataset.createdAt;
+      row.cells[6].textContent = row.dataset.clusterType || "-";
+      row.cells[7].textContent = row.dataset.version;
+      row.cells[10].textContent = row.dataset.createdAt;
       const status = row.querySelector(".cluster-status");
       status.classList.add(row.dataset.status);
       status.textContent = row.dataset.statusText;
@@ -4153,30 +4244,17 @@
         });
       };
       const formatResourceValue = (value) => (Number.isFinite(value) ? value : 0).toFixed(2);
-      const setDonut = (name, used, total) => {
-        const donut = document.querySelector(`[data-resource-donut="${name}"]`);
-        const percent = total > 0 ? Math.min(Math.max(used / total, 0), 1) * 100 : 0;
-        donut.style.setProperty("--resource-used-percent", `${percent}%`);
-      };
-      const cpuUsed = Math.max(Number(row.dataset.cpuUsed) || 0, 0);
       const cpuTotal = Math.max(Number(row.dataset.cpuTotal) || 0, 0);
-      const memoryUsed = Math.max(Number(row.dataset.memoryUsed) || 0, 0);
       const memoryTotal = Math.max(Number(row.dataset.memoryTotal) || 0, 0);
       const nodeTotal = Math.max(Number(row.dataset.nodes) || 0, 0);
       const nodeReady = Math.min(Math.max(Number(row.dataset.ready) || 0, 0), nodeTotal);
 
-      setValue("cpu-used", formatResourceValue(cpuUsed));
       setValue("cpu-total", formatResourceValue(cpuTotal));
-      setValue("cpu-free", formatResourceValue(Math.max(cpuTotal - cpuUsed, 0)));
-      setValue("memory-used", formatResourceValue(memoryUsed));
       setValue("memory-total", formatResourceValue(memoryTotal));
-      setValue("memory-free", formatResourceValue(Math.max(memoryTotal - memoryUsed, 0)));
       setValue("node-total", String(nodeTotal));
       setValue("node-ready", String(nodeReady));
       setValue("node-error", String(nodeTotal - nodeReady));
       setValue("instance-total", "0");
-      setDonut("cpu", cpuUsed, cpuTotal);
-      setDonut("memory", memoryUsed, memoryTotal);
       const nodeProgress = document.querySelector('[data-resource-progress="nodes"]');
       const instanceProgress = document.querySelector('[data-resource-progress="instances"]');
       nodeProgress.style.width = `${nodeTotal ? (nodeReady / nodeTotal) * 100 : 0}%`;
@@ -4186,20 +4264,24 @@
     function renderE2bClusterDetail(row) {
       activeE2bDetailRow = row;
       const status = row.querySelector(".cluster-status");
-      const statusClass = status && status.classList.contains("creating") ? "creating" : status && status.classList.contains("error") ? "error" : "running";
+      const statusClass = status && status.classList.contains("error") ? "error" : "running";
       const statusText = status ? status.textContent.trim() : row.dataset.statusText || "运行中";
       const fields = {
         name: row.dataset.name,
         displayName: row.dataset.displayName,
+        clusterType: row.dataset.clusterType,
         zone: row.dataset.zone,
         networkId: row.dataset.networkId,
         networkName: row.dataset.networkName,
         apiAddress: row.dataset.apiAddress,
         clusterToken: row.dataset.clusterToken,
+        sandboxTeamId: row.dataset.sandboxTeamId,
+        sandboxApiAddress: row.dataset.sandboxApiAddress,
+        sandboxApiKey: row.dataset.sandboxApiKey,
         version: row.dataset.version,
         createdAt: row.dataset.createdAt,
         nodes: `${row.dataset.ready || 0} / ${row.dataset.nodes || 0}`,
-        resources: `CPU：${row.dataset.cpuUsed || 0}核 / ${row.dataset.cpuTotal || 0}核，内存：${row.dataset.memoryUsed || 0}GiB / ${row.dataset.memoryTotal || 0}GiB`
+        resources: `CPU：${row.dataset.cpuTotal || 0}核，内存：${row.dataset.memoryTotal || 0}GiB`
       };
       e2bDetailTitle.textContent = `集群详情[${row.dataset.name || "-"}]`;
       e2bDetailSubtitle.textContent = `${row.dataset.name || "-"} · ${row.dataset.id || "-"}`;
@@ -4213,8 +4295,6 @@
 
       const nodeCount = Number(row.dataset.nodes) || 0;
       const readyCount = Number(row.dataset.ready) || 0;
-      const nodeCpuTotal = 24;
-      const nodeMemoryTotal = 48;
       const clusterNumber = Number(row.dataset.id?.match(/\d+$/)?.[0]) || 1;
       const deletedNodes = new Set((row.dataset.deletedNodes || "").split("|").filter(Boolean));
       e2bDetailNodesBody.replaceChildren();
@@ -4224,12 +4304,10 @@
         const nodeRow = document.createElement("tr");
         const nodeStatus = index <= readyCount ? "ready" : "pending";
         const nodeStatusText = index <= readyCount ? "Ready" : "未就绪";
-        const nodeCpuUsed = nodeStatus === "ready" ? 10 + (index % 4) * 2 : 0;
-        const nodeMemoryUsed = nodeStatus === "ready" ? 20 + (index % 4) * 4 : 0;
         const sandboxInstances = nodeStatus === "ready" ? (index % 3) + 1 : 0;
         const nodeIp = `10.0.${clusterNumber}.${100 + index}`;
         nodeRow.dataset.nodeName = nodeName;
-        nodeRow.innerHTML = `<td>${nodeName}</td><td>${nodeIp}</td><td><span class="node-status ${nodeStatus}">${nodeStatusText}</span></td><td>${row.dataset.zone || "-"}</td><td>24vCPU 48GB</td><td>${nodeCpuUsed.toFixed(2)}/${nodeCpuTotal.toFixed(2)}</td><td>${nodeMemoryUsed.toFixed(2)}/${nodeMemoryTotal.toFixed(2)}</td><td>${sandboxInstances}</td><td><a class="action-link js-monitor-e2b-node" role="button">监控</a><a class="action-link danger js-delete-e2b-node" role="button">删除</a></td>`;
+        nodeRow.innerHTML = `<td>${nodeName}</td><td>${nodeIp}</td><td><span class="node-status ${nodeStatus}">${nodeStatusText}</span></td><td>${row.dataset.zone || "-"}</td><td>24vCPU 48GB</td><td>${sandboxInstances}</td><td><a class="action-link js-monitor-e2b-node" role="button">监控</a></td>`;
         e2bDetailNodesBody.appendChild(nodeRow);
         bindE2bNodeRow(nodeRow);
       }
@@ -4270,7 +4348,7 @@
       if (!matches.length) {
         const emptyRow = document.createElement("tr");
         emptyRow.className = "js-node-filter-empty";
-        emptyRow.innerHTML = `<td class="cluster-detail-empty" colspan="9">${rows.length && name ? "暂无匹配节点" : "暂无节点"}</td>`;
+        emptyRow.innerHTML = `<td class="cluster-detail-empty" colspan="7">${rows.length && name ? "暂无匹配节点" : "暂无节点"}</td>`;
         e2bDetailNodesBody.appendChild(emptyRow);
       }
     }
@@ -4280,15 +4358,6 @@
         showToast("监控功能暂未开放!");
       });
 
-      nodeRow.querySelector(".js-delete-e2b-node").addEventListener("click", () => {
-        activeE2bNodeDeleteRow = nodeRow;
-        activeDeleteRow = undefined;
-        activeSandboxToggle = undefined;
-        deleteSuccessText = "节点已删除!";
-        confirmActionTitle.textContent = "确认删除!";
-        deleteMessage.replaceChildren(`确认删除节点“${nodeRow.dataset.nodeName}”？`, document.createElement("br"), "删除后将无法恢复，请谨慎操作。");
-        openLayer(deleteModal);
-      });
     }
 
     function bindE2bClusterRow(row) {
@@ -4300,33 +4369,44 @@
       });
 
       row.querySelector(".js-edit-e2b-cluster").addEventListener("click", () => {
-        e2bClusterModalMode = "edit";
+        e2bCreateFormMode = "edit";
         activeE2bClusterRow = row;
-        e2bClusterTitle.textContent = "编辑集群";
-        e2bClusterName.value = row.dataset.name;
-        e2bClusterDisplayName.value = row.dataset.displayName;
-        e2bClusterZone.value = row.dataset.zone;
-        e2bClusterApiAddress.value = row.dataset.apiAddress || "";
-        e2bClusterToken.value = row.dataset.clusterToken || "";
-        e2bClusterVersion.value = row.dataset.version;
-        document.querySelectorAll(".cluster-form-field").forEach((field) => {
-          field.hidden = false;
-        });
-        openLayer(e2bClusterModal);
+        e2bCreateTitle.textContent = "编辑集群";
+        e2bCreateCrumbTitle.textContent = "编辑集群";
+        e2bCreateName.value = row.dataset.name || "";
+        e2bCreateDisplayName.value = row.dataset.displayName || "";
+        e2bCreateType.value = row.dataset.clusterType === "专用集群" ? "dedicated" : "public";
+        e2bCreateZone.value = row.dataset.zone || "bjwdt";
+        e2bCreateApiAddress.value = row.dataset.apiAddress || "";
+        e2bCreateToken.value = row.dataset.clusterToken || "";
+        e2bCreateSandboxTeamId.value = row.dataset.sandboxTeamId || "";
+        e2bCreateSandboxApiAddress.value = row.dataset.sandboxApiAddress || "";
+        e2bCreateSandboxApiKey.value = row.dataset.sandboxApiKey || "";
+        setE2bCreateEditability(true);
+        validateE2bCreateName();
+        showContent("e2b-create");
+        e2bCreateName.focus();
       });
 
       row.querySelector(".js-add-e2b-node").addEventListener("click", () => {
         showToast("监控功能暂未开放!");
       });
 
-      row.querySelector(".js-delete-e2b-cluster").addEventListener("click", () => {
-        activeDeleteRow = row;
-        activeSandboxToggle = undefined;
-        deleteSuccessText = "集群已删除!";
-        confirmActionTitle.textContent = "确认删除!";
-        deleteMessage.replaceChildren(`确认删除集群“${row.dataset.displayName}”（${row.dataset.name}）？`, document.createElement("br"), "删除后将无法恢复，请谨慎操作。");
-        openLayer(deleteModal);
-      });
+      const deleteLink = row.querySelector(".js-delete-e2b-cluster");
+      const isDeletable = row.dataset.clusterType === "专用集群";
+      deleteLink.classList.toggle("is-disabled", !isDeletable);
+      deleteLink.setAttribute("aria-disabled", String(!isDeletable));
+      deleteLink.title = isDeletable ? "删除集群" : "公共集群不允许删除";
+      if (isDeletable) {
+        deleteLink.addEventListener("click", () => {
+          activeDeleteRow = row;
+          activeSandboxToggle = undefined;
+          deleteSuccessText = "集群已删除!";
+          confirmActionTitle.textContent = "确认删除!";
+          deleteMessage.replaceChildren(`确认删除集群“${row.dataset.displayName}”（${row.dataset.name}）？`, document.createElement("br"), "删除后将无法恢复，请谨慎操作。");
+          openLayer(deleteModal);
+        });
+      }
     }
 
     function applyE2bClusterFilters() {
@@ -4448,82 +4528,77 @@
       return zone === "tjcorp" ? "天津企业网络" : "北京研发网络";
     }
 
-    function validateE2bClusterName() {
-      e2bClusterName.setCustomValidity(
-        e2bClusterName.value && !e2bClusterNamePattern.test(e2bClusterName.value) ? e2bClusterNameError : ""
-      );
+    function getE2bClusterTypeLabel(type) {
+      return type === "dedicated" ? "专用集群" : "公共集群";
     }
 
-    e2bClusterName.addEventListener("input", validateE2bClusterName);
+    function validateE2bCreateName() {
+      const value = e2bCreateName.value;
+      const isInvalid = Boolean(value) && !e2bCreateNamePattern.test(value);
+      const message = isInvalid ? e2bCreateName.title : "";
+      e2bCreateName.setCustomValidity(message);
+      e2bCreateName.classList.toggle("is-invalid", isInvalid);
+      e2bCreateName.setAttribute("aria-invalid", String(isInvalid));
+      e2bCreateNameError.hidden = !isInvalid;
+      e2bCreateNameError.textContent = message;
+    }
+
+    function setE2bCreateEditability(isEditing) {
+      [
+        e2bCreateType,
+        e2bCreateZone,
+        e2bCreateApiAddress,
+        e2bCreateToken,
+        e2bCreateSandboxTeamId,
+        e2bCreateSandboxApiAddress,
+        e2bCreateSandboxApiKey
+      ].forEach((control) => {
+        control.disabled = isEditing;
+      });
+    }
+
+    function resetE2bCreateForm() {
+      e2bCreateForm.reset();
+      e2bCreateFormMode = "create";
+      activeE2bClusterRow = undefined;
+      setE2bCreateEditability(false);
+      e2bCreateTitle.textContent = "添加集群";
+      e2bCreateCrumbTitle.textContent = "添加集群";
+      validateE2bCreateName();
+      e2bCreateZone.value = "bjwdt";
+    }
+
+    e2bCreateName.addEventListener("input", validateE2bCreateName);
 
     document.querySelector("#createE2bClusterBtn").addEventListener("click", () => {
-      e2bClusterModalMode = "create";
-      activeE2bClusterRow = undefined;
-      e2bClusterTitle.textContent = "添加集群";
-      e2bClusterName.value = "";
-      e2bClusterDisplayName.value = "";
-      e2bClusterZone.value = "bjwdt";
-      e2bClusterApiAddress.value = "";
-      e2bClusterToken.value = "";
-      e2bClusterVersion.value = "v1.4.2";
-      validateE2bClusterName();
-      document.querySelectorAll(".cluster-form-field").forEach((field) => {
-        field.hidden = false;
+      resetE2bCreateForm();
+      showContent("e2b-create");
+      e2bCreateName.focus();
+    });
+
+    document.querySelectorAll(".js-close-e2b-create").forEach((button) => {
+      button.addEventListener("click", () => {
+        resetE2bCreateForm();
+        showContent("E2B集群");
       });
-      openLayer(e2bClusterModal);
     });
 
-    document.querySelectorAll(".js-close-e2b-cluster").forEach((button) => {
-      button.addEventListener("click", () => closeLayer(e2bClusterModal));
-    });
-
-    document.querySelector("#saveE2bClusterBtn").addEventListener("click", () => {
-      validateE2bClusterName();
-      const inputName = e2bClusterName.value;
-      const inputDisplayName = e2bClusterDisplayName.value.trim();
-      const apiAddress = e2bClusterApiAddress.value.trim();
-      const clusterToken = e2bClusterToken.value.trim();
-      if (!e2bClusterName.checkValidity()) {
-        e2bClusterName.reportValidity();
-        e2bClusterName.focus();
-        return;
-      }
-      if (!inputDisplayName) {
-        e2bClusterDisplayName.reportValidity();
-        e2bClusterDisplayName.focus();
-        return;
-      }
-      if (!e2bClusterApiAddress.checkValidity()) {
-        e2bClusterApiAddress.reportValidity();
-        e2bClusterApiAddress.focus();
-        return;
-      }
-      if (!e2bClusterToken.checkValidity()) {
-        e2bClusterToken.reportValidity();
-        e2bClusterToken.focus();
+    e2bCreateForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!e2bCreateForm.checkValidity()) {
+        e2bCreateForm.reportValidity();
         return;
       }
 
-      if (e2bClusterModalMode === "edit" && activeE2bClusterRow) {
+      if (e2bCreateFormMode === "edit" && activeE2bClusterRow) {
         const row = activeE2bClusterRow;
-        row.dataset.name = inputName;
-        row.dataset.displayName = inputDisplayName;
-        if (row.dataset.zone !== e2bClusterZone.value) {
-          row.dataset.zone = e2bClusterZone.value;
-          row.dataset.networkId = `net-${row.dataset.zone}-001`;
-          row.dataset.networkName = getE2bNetworkName(row.dataset.zone);
-        }
-        row.dataset.apiAddress = apiAddress;
-        row.dataset.clusterToken = clusterToken;
-        row.dataset.version = e2bClusterVersion.value.trim() || "-";
+        row.dataset.name = e2bCreateName.value.trim();
+        row.dataset.displayName = e2bCreateDisplayName.value.trim();
         setE2bClusterNameCell(row);
         row.cells[2].textContent = row.dataset.displayName;
-        row.cells[4].textContent = row.dataset.zone;
-        row.cells[5].innerHTML = "<span class=\"network-line\">" + row.dataset.networkId + "</span><span class=\"network-line\">" + row.dataset.networkName + "</span>";
-        row.cells[6].textContent = row.dataset.version;
-        renderE2bClusterMetrics(row);
         if (activeE2bDetailRow === row) renderE2bClusterDetail(row);
-        closeLayer(e2bClusterModal);
+        resetE2bCreateForm();
+        showContent("E2B集群");
         applyE2bClusterFilters();
         showToast("集群已更新!");
         return;
@@ -4531,16 +4606,20 @@
 
       const clusterRow = createE2bClusterRow({
         id: "e2b-cluster-" + Date.now(),
-        name: inputName,
-        displayName: inputDisplayName,
-        status: "creating",
-        statusText: "添加中",
-        zone: e2bClusterZone.value,
-        networkId: `net-${e2bClusterZone.value}-001`,
-        networkName: getE2bNetworkName(e2bClusterZone.value),
-        apiAddress,
-        clusterToken,
-        version: e2bClusterVersion.value.trim() || "-",
+        name: e2bCreateName.value.trim(),
+        displayName: e2bCreateDisplayName.value.trim(),
+        clusterType: getE2bClusterTypeLabel(e2bCreateType.value),
+        status: "running",
+        statusText: "运行中",
+        zone: e2bCreateZone.value,
+        networkId: `net-${e2bCreateZone.value}-001`,
+        networkName: getE2bNetworkName(e2bCreateZone.value),
+        apiAddress: e2bCreateApiAddress.value.trim(),
+        clusterToken: e2bCreateToken.value.trim(),
+        sandboxTeamId: e2bCreateSandboxTeamId.value.trim(),
+        sandboxApiAddress: e2bCreateSandboxApiAddress.value.trim(),
+        sandboxApiKey: e2bCreateSandboxApiKey.value.trim(),
+        version: "-",
         ready: 0,
         nodes: 3,
         cpuUsed: 0,
@@ -4551,7 +4630,8 @@
       });
       e2bClusterTableBody.prepend(clusterRow);
       bindE2bClusterRow(clusterRow);
-      closeLayer(e2bClusterModal);
+      resetE2bCreateForm();
+      showContent("E2B集群");
       applyE2bClusterFilters();
       showToast("集群已添加!");
     });
@@ -5019,6 +5099,13 @@
         return;
       }
       const deletedE2bCluster = deleteSuccessText === "集群已删除!";
+      if (deletedE2bCluster && activeDeleteRow?.dataset?.clusterType !== "专用集群") {
+        activeDeleteRow = undefined;
+        closeLayer(deleteModal);
+        showToast("公共集群不允许删除!");
+        deleteSuccessText = "删除成功!";
+        return;
+      }
       activeDeleteRow?.forEach?.((row) => row.remove());
       activeDeleteRow?.remove?.();
       activeDeleteRow = undefined;
