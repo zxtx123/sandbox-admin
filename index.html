@@ -2909,6 +2909,10 @@
                   <label class="quota-edit-label required" for="e2bCreateToken">集群token</label>
                   <input class="quota-edit-input" id="e2bCreateToken" name="clusterToken" type="password" placeholder="请输入集群token" pattern=".*\S.*" required />
                 </div>
+                <div class="cluster-create-field">
+                  <label class="quota-edit-label" for="e2bCreateNetwork">网络</label>
+                  <input class="quota-edit-input" id="e2bCreateNetwork" name="networkName" type="text" placeholder="请输入网络名称" />
+                </div>
               </div>
             </section>
             <section class="cluster-create-section" aria-labelledby="e2bCreateSandboxHeading">
@@ -4057,6 +4061,7 @@
     const e2bCreateZone = document.querySelector("#e2bCreateZone");
     const e2bCreateApiAddress = document.querySelector("#e2bCreateApiAddress");
     const e2bCreateToken = document.querySelector("#e2bCreateToken");
+    const e2bCreateNetwork = document.querySelector("#e2bCreateNetwork");
     const e2bCreateSandboxTeamId = document.querySelector("#e2bCreateSandboxTeamId");
     const e2bCreateSandboxApiAddress = document.querySelector("#e2bCreateSandboxApiAddress");
     const e2bCreateSandboxApiKey = document.querySelector("#e2bCreateSandboxApiKey");
@@ -4203,7 +4208,7 @@
       setE2bClusterNameCell(row);
       row.cells[2].textContent = row.dataset.displayName;
       row.cells[4].textContent = row.dataset.zone;
-      row.cells[5].innerHTML = "<span class=\"network-line\">" + row.dataset.networkId + "</span><span class=\"network-line\">" + row.dataset.networkName + "</span>";
+      renderE2bClusterNetwork(row);
       row.cells[6].textContent = row.dataset.clusterType || "-";
       row.cells[7].textContent = row.dataset.version;
       row.cells[10].textContent = row.dataset.createdAt;
@@ -4212,6 +4217,16 @@
       status.textContent = row.dataset.statusText;
       renderE2bClusterMetrics(row);
       return row;
+    }
+
+    function renderE2bClusterNetwork(row) {
+      const lines = [row.dataset.networkId, row.dataset.networkName].map((value) => {
+        const line = document.createElement("span");
+        line.className = "network-line";
+        line.textContent = value || "-";
+        return line;
+      });
+      row.querySelector(".cluster-network").replaceChildren(...lines);
     }
 
     function setE2bClusterNameCell(row) {
@@ -4379,6 +4394,7 @@
         e2bCreateZone.value = row.dataset.zone || "bjwdt";
         e2bCreateApiAddress.value = row.dataset.apiAddress || "";
         e2bCreateToken.value = row.dataset.clusterToken || "";
+        e2bCreateNetwork.value = row.dataset.networkName || "";
         e2bCreateSandboxTeamId.value = row.dataset.sandboxTeamId || "";
         e2bCreateSandboxApiAddress.value = row.dataset.sandboxApiAddress || "";
         e2bCreateSandboxApiKey.value = row.dataset.sandboxApiKey || "";
@@ -4523,11 +4539,6 @@
       showContent("E2B集群");
     });
 
-    function getE2bNetworkName(zone) {
-      if (zone === "biwdt") return "隔离VPC";
-      return zone === "tjcorp" ? "天津企业网络" : "北京研发网络";
-    }
-
     function getE2bClusterTypeLabel(type) {
       return type === "dedicated" ? "专用集群" : "公共集群";
     }
@@ -4594,8 +4605,10 @@
         const row = activeE2bClusterRow;
         row.dataset.name = e2bCreateName.value.trim();
         row.dataset.displayName = e2bCreateDisplayName.value.trim();
+        row.dataset.networkName = e2bCreateNetwork.value.trim();
         setE2bClusterNameCell(row);
         row.cells[2].textContent = row.dataset.displayName;
+        renderE2bClusterNetwork(row);
         if (activeE2bDetailRow === row) renderE2bClusterDetail(row);
         resetE2bCreateForm();
         showContent("E2B集群");
@@ -4613,7 +4626,7 @@
         statusText: "运行中",
         zone: e2bCreateZone.value,
         networkId: `net-${e2bCreateZone.value}-001`,
-        networkName: getE2bNetworkName(e2bCreateZone.value),
+        networkName: e2bCreateNetwork.value.trim(),
         apiAddress: e2bCreateApiAddress.value.trim(),
         clusterToken: e2bCreateToken.value.trim(),
         sandboxTeamId: e2bCreateSandboxTeamId.value.trim(),
