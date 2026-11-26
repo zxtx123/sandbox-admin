@@ -1065,6 +1065,43 @@
       padding: 16px 24px;
     }
 
+    .cluster-connection-check {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      max-width: 800px;
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #edf0f5;
+    }
+
+    .cluster-connection-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      color: #8c9aae;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .cluster-connection-status::before {
+      content: "";
+      flex-shrink: 0;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .cluster-connection-check .plain-btn {
+      flex-shrink: 0;
+    }
+
+    .cluster-connection-status.is-success { color: #18a058; }
+    .cluster-connection-status.is-error { color: #e5484d; }
+
     .cluster-detail-tabs {
       display: flex;
       align-items: center;
@@ -3048,6 +3085,10 @@
                   <input class="quota-edit-input" id="e2bCreateNetwork" name="networkName" type="text" placeholder="请输入网络名称" />
                 </div>
               </div>
+              <div class="cluster-connection-check">
+                <span class="cluster-connection-status" id="e2bClusterConnectionStatus" role="status" aria-live="polite">待校验</span>
+                <button class="plain-btn" id="e2bCheckClusterConnectionBtn" type="button" aria-describedby="e2bClusterConnectionStatus">校验连接</button>
+              </div>
             </section>
             <section class="cluster-create-section" aria-labelledby="e2bCreateSandboxHeading">
               <h3 id="e2bCreateSandboxHeading">沙箱信息</h3>
@@ -3064,6 +3105,10 @@
                   <label class="quota-edit-label required" for="e2bCreateSandboxApiKey">沙箱API Key</label>
                   <input class="quota-edit-input" id="e2bCreateSandboxApiKey" name="sandboxApiKey" type="password" placeholder="请输入沙箱API Key" required />
                 </div>
+              </div>
+              <div class="cluster-connection-check">
+                <span class="cluster-connection-status" id="e2bSandboxConnectionStatus" role="status" aria-live="polite">待校验</span>
+                <button class="plain-btn" id="e2bCheckSandboxConnectionBtn" type="button" aria-describedby="e2bSandboxConnectionStatus">校验连接</button>
               </div>
             </section>
             <footer class="cluster-create-actions">
@@ -5195,6 +5240,7 @@
     }
 
     function setE2bCreateEditability(isEditing) {
+      document.querySelectorAll(".cluster-connection-status").forEach(resetE2bConnectionStatus);
       [
         e2bCreateType,
         e2bCreateZone,
@@ -5220,6 +5266,39 @@
     }
 
     e2bCreateName.addEventListener("input", validateE2bCreateName);
+
+    function resetE2bConnectionStatus(status) {
+      status.textContent = "待校验";
+      status.classList.remove("is-success", "is-error");
+    }
+
+    // 按演示要求展示固定结果，后续接入真实连接校验接口。
+    [
+      {
+        button: "#e2bCheckClusterConnectionBtn",
+        status: "#e2bClusterConnectionStatus",
+        fields: [e2bCreateApiAddress, e2bCreateToken],
+        result: "集群服务可用",
+        className: "is-success"
+      },
+      {
+        button: "#e2bCheckSandboxConnectionBtn",
+        status: "#e2bSandboxConnectionStatus",
+        fields: [e2bCreateSandboxTeamId, e2bCreateSandboxApiAddress, e2bCreateSandboxApiKey],
+        result: "沙箱连接失败，请检查配置信息",
+        className: "is-error"
+      }
+    ].forEach(({ button, status, fields, result, className }) => {
+      const statusElement = document.querySelector(status);
+      document.querySelector(button).addEventListener("click", () => {
+        resetE2bConnectionStatus(statusElement);
+        statusElement.textContent = result;
+        statusElement.classList.add(className);
+      });
+      fields.forEach((field) => {
+        field.addEventListener("input", () => resetE2bConnectionStatus(statusElement));
+      });
+    });
 
     document.querySelector("#createE2bClusterBtn").addEventListener("click", () => {
       resetE2bCreateForm();
