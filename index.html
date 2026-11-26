@@ -3098,6 +3098,10 @@
                   <input class="quota-edit-input" id="e2bCreateSandboxTeamId" name="sandboxTeamId" type="text" placeholder="请输入沙箱Team ID" required />
                 </div>
                 <div class="cluster-create-field">
+                  <label class="quota-edit-label required" for="e2bCreateSandboxEntryAddress">沙箱入口地址</label>
+                  <input class="quota-edit-input" id="e2bCreateSandboxEntryAddress" name="sandboxEntryAddress" type="url" placeholder="请输入沙箱入口地址" required />
+                </div>
+                <div class="cluster-create-field">
                   <label class="quota-edit-label required" for="e2bCreateSandboxApiAddress">沙箱API地址</label>
                   <input class="quota-edit-input" id="e2bCreateSandboxApiAddress" name="sandboxApiAddress" type="url" placeholder="请输入沙箱API地址" required />
                 </div>
@@ -4446,6 +4450,7 @@
     const e2bCreateToken = document.querySelector("#e2bCreateToken");
     const e2bCreateNetwork = document.querySelector("#e2bCreateNetwork");
     const e2bCreateSandboxTeamId = document.querySelector("#e2bCreateSandboxTeamId");
+    const e2bCreateSandboxEntryAddress = document.querySelector("#e2bCreateSandboxEntryAddress");
     const e2bCreateSandboxApiAddress = document.querySelector("#e2bCreateSandboxApiAddress");
     const e2bCreateSandboxApiKey = document.querySelector("#e2bCreateSandboxApiKey");
     const deleteModal = document.querySelector("#deleteModal");
@@ -4957,6 +4962,7 @@
         apiAddress: row.dataset.apiAddress,
         clusterToken: row.dataset.clusterToken,
         sandboxTeamId: row.dataset.sandboxTeamId,
+        sandboxEntryAddress: row.dataset.sandboxEntryAddress,
         sandboxApiAddress: row.dataset.sandboxApiAddress,
         sandboxApiKey: row.dataset.sandboxApiKey,
         version: row.dataset.version,
@@ -5062,6 +5068,7 @@
         e2bCreateToken.value = row.dataset.clusterToken || "";
         e2bCreateNetwork.value = row.dataset.networkName || "";
         e2bCreateSandboxTeamId.value = row.dataset.sandboxTeamId || "";
+        e2bCreateSandboxEntryAddress.value = row.dataset.sandboxEntryAddress || "";
         e2bCreateSandboxApiAddress.value = row.dataset.sandboxApiAddress || "";
         e2bCreateSandboxApiKey.value = row.dataset.sandboxApiKey || "";
         setE2bCreateEditability(true);
@@ -5247,6 +5254,7 @@
         e2bCreateApiAddress,
         e2bCreateToken,
         e2bCreateSandboxTeamId,
+        e2bCreateSandboxEntryAddress,
         e2bCreateSandboxApiAddress,
         e2bCreateSandboxApiKey
       ].forEach((control) => {
@@ -5284,7 +5292,7 @@
       {
         button: "#e2bCheckSandboxConnectionBtn",
         status: "#e2bSandboxConnectionStatus",
-        fields: [e2bCreateSandboxTeamId, e2bCreateSandboxApiAddress, e2bCreateSandboxApiKey],
+        fields: [e2bCreateSandboxTeamId, e2bCreateSandboxEntryAddress, e2bCreateSandboxApiAddress, e2bCreateSandboxApiKey],
         result: "沙箱连接失败，请检查配置信息",
         className: "is-error"
       }
@@ -5349,6 +5357,7 @@
         apiAddress: e2bCreateApiAddress.value.trim(),
         clusterToken: e2bCreateToken.value.trim(),
         sandboxTeamId: e2bCreateSandboxTeamId.value.trim(),
+        sandboxEntryAddress: e2bCreateSandboxEntryAddress.value.trim(),
         sandboxApiAddress: e2bCreateSandboxApiAddress.value.trim(),
         sandboxApiKey: e2bCreateSandboxApiKey.value.trim(),
         version: "-",
